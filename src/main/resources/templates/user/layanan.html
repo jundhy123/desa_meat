@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan Surat - Website Resmi Desa Meat</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
+                Desa<span>Meat</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Beranda</a></li>
+                <li><a href="/profil" class="nav-link">Profil</a></li>
+                <li><a href="/wisata" class="nav-link">Wisata</a></li>
+                <li><a href="/umkm" class="nav-link">UMKM</a></li>
+                <li><a href="/layanan" class="nav-link active">Layanan Surat</a></li>
+                <li><a href="/galeri" class="nav-link">Galeri</a></li>
+                <li><a href="/kontak" class="nav-link">Kontak</a></li>
+                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="hero" style="height: 35vh; min-height: 200px; background: linear-gradient(rgba(12, 74, 110, 0.75), rgba(12, 74, 110, 0.95)), url('https://images.unsplash.com/photo-1599818816828-4cbcc63e792c?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+        <div class="hero-content">
+            <h1>Layanan Surat Online</h1>
+            <p>Ajukan permohonan surat keterangan dan pantau status pengajuan secara real-time.</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="section" style="max-width: 900px;">
+        
+        <!-- Part 1: Track Request Status -->
+        <div class="section-header" style="margin-bottom: 2rem;">
+            <span style="color: var(--lake-primary); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Pelacakan Surat</span>
+            <h2 style="font-size: 1.75rem;">Lacak Pengajuan Surat Anda</h2>
+            <p style="color: var(--text-muted);">Masukkan NIK Anda atau ID Surat (contoh: SRT-2026-123) untuk melihat status terkini.</p>
+        </div>
+
+        <form action="/layanan/lacak" method="GET" class="search-box">
+            <input type="text" name="query" class="form-control" placeholder="Masukkan NIK atau ID Surat..." required style="border-radius: var(--radius-md) 0 0 var(--radius-md);">
+            <button type="submit" class="btn btn-primary" style="border-radius: 0 var(--radius-md) var(--radius-md) 0;"><i class="fa-solid fa-magnifying-glass"></i> Lacak</button>
+        </form>
+
+        <!-- Tracking Results -->
+        <div class="tracking-results" th:if="${tracked}">
+            <div th:if="${results == null or results.isEmpty()}" style="background-color: #fee2e2; border: 1px solid #f87171; color: var(--batak-red); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-bottom: 3rem; font-weight: 600;">
+                <i class="fa-solid fa-circle-xmark"></i> Data pengajuan surat tidak ditemukan. Periksa kembali NIK atau ID Surat yang Anda masukkan.
+            </div>
+            
+            <div th:if="${results != null and !results.isEmpty()}" style="margin-bottom: 4rem;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--lake-deep); font-size: 1.35rem;"><i class="fa-solid fa-circle-check" style="color: var(--field-green);"></i> Hasil Pelacakan Pengajuan</h3>
+                
+                <div th:each="req : ${results}" class="detail-card" style="margin-bottom: 2rem; padding: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <span style="font-weight: 700; color: var(--lake-primary); font-size: 1.1rem;" th:text="${req.id}">SRT-2026-100</span>
+                            <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 1rem;" th:text="${#temporals.format(req.tanggalPengajuan, 'dd MMMM yyyy')}">25 Mei 2026</span>
+                        </div>
+                        <div>
+                            <span th:if="${req.status.name() == 'PENDING'}" class="badge badge-pending">PENDING</span>
+                            <span th:if="${req.status.name() == 'DIPROSES'}" class="badge badge-process">DIPROSES</span>
+                            <span th:if="${req.status.name() == 'SELESAI'}" class="badge badge-success">SELESAI</span>
+                            <span th:if="${req.status.name() == 'DITOLAK'}" class="badge badge-danger">DITOLAK</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; font-size: 0.95rem;">
+                        <div><strong>NIK:</strong> <span th:text="${req.nik}">-</span></div>
+                        <div><strong>Nama Lengkap:</strong> <span th:text="${req.namaLengkap}">-</span></div>
+                        <div><strong>Jenis Surat:</strong> <span th:text="${req.jenisSurat}">-</span></div>
+                        <div><strong>Keterangan:</strong> <span th:text="${req.keterangan != null ? req.keterangan : '-'}">-</span></div>
+                    </div>
+                    
+                    <!-- Timeline Section -->
+                    <div th:if="${req.status.name() != 'DITOLAK'}" class="status-timeline">
+                        <div class="timeline-step completed">
+                            <div class="timeline-content">
+                                <strong>Dokumen Diajukan</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Permohonan berhasil dikirim ke kantor desa dan sedang mengantre.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step" th:classappend="${req.status.name() == 'DIPROSES' || req.status.name() == 'SELESAI' ? 'completed' : 'active'}">
+                            <div class="timeline-content">
+                                <strong>Verifikasi & Pemrosesan</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Staf kantor desa memverifikasi kelengkapan berkas Anda.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step" th:classappend="${req.status.name() == 'SELESAI' ? 'completed' : (req.status.name() == 'DIPROSES' ? 'active' : '')}">
+                            <div class="timeline-content">
+                                <strong>Surat Selesai</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Surat selesai ditandatangani. Staf kami akan mengirimkan file digital ke WhatsApp Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rejected Warning Card -->
+                    <div th:if="${req.status.name() == 'DITOLAK'}" style="background-color: #fef2f2; border-left: 4px solid var(--batak-red); padding: 1rem; border-radius: var(--radius-md);">
+                        <strong style="color: var(--batak-red);"><i class="fa-solid fa-circle-exclamation"></i> Pengajuan Ditolak</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;" th:text="${req.catatanAdmin != null ? req.catatanAdmin : 'Maaf, berkas persyaratan Anda kurang lengkap. Silakan ajukan ulang.'}">Catatan admin...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 3rem 0;">
+
+        <!-- Part 2: Submit New Request -->
+        <div class="section-header" style="margin-bottom: 2.5rem;">
+            <span style="color: var(--lake-teal); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Formulir Permohonan</span>
+            <h2 style="font-size: 1.75rem;">Buat Permohonan Surat Baru</h2>
+            <p style="color: var(--text-muted);">Isi formulir di bawah ini dengan lengkap dan benar untuk memproses administrasi Anda.</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Alert success success-form (Hidden by default) -->
+            <div id="success-alert" style="display: none; background-color: var(--field-light); border: 1px solid var(--field-green); color: var(--field-green); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="color: var(--field-green); margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i> Pengajuan Berhasil Terkirim!</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem;">Simpan ID Surat berikut untuk melacak status pengajuan Anda:</p>
+                <div style="background-color: #fff; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 1.2rem; font-weight: 800; text-align: center; border: 1px dashed var(--field-green); letter-spacing: 1px;" id="generated-id">SRT-2026-XXXX</div>
+            </div>
+
+            <form id="layananForm">
+                <div class="form-group">
+                    <label class="form-label" for="nik">Nomor Induk Kependudukan (NIK)</label>
+                    <input type="text" id="nik" class="form-control" placeholder="Masukkan 16 digit NIK..." maxlength="16" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" class="form-control" placeholder="Masukkan nama lengkap sesuai KTP..." required>
+                </div>
+
+                <div class="grid-3" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="email">Alamat Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="contoh@email.com" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="whatsapp">No. WhatsApp</label>
+                        <input type="text" id="whatsapp" class="form-control" placeholder="Contoh: 0821xxxxxxxx" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="jenisSurat">Jenis Surat Keterangan</label>
+                    <select id="jenisSurat" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Jenis Surat --</option>
+                        <option th:each="type : ${suratTypes}" th:value="${type}" th:text="${type}">Surat Keterangan Usaha</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="keterangan">Keterangan / Keperluan Surat</label>
+                    <textarea id="keterangan" class="form-control" rows="4" placeholder="Jelaskan secara singkat keperluan surat ini..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem;"><i class="fa-solid fa-paper-plane"></i> Kirim Pengajuan Surat</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h3>Desa Meat</h3>
+                <p style="margin-bottom: 1.5rem;">Kantor Kepala Desa Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara, Indonesia.</p>
+                <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Navigasi</h4>
+                <ul>
+                    <li><a href="/">Beranda</a></li>
+                    <li><a href="/profil">Profil Desa</a></li>
+                    <li><a href="/wisata">Pariwisata</a></li>
+                    <li><a href="/layanan">Layanan Administratif</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Kontak Informasi</h4>
+                <ul style="color: rgba(255,255,255,0.6);">
+                    <li><i class="fa-solid fa-phone"></i> +62 821-6543-9876</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@desameat.go.id</li>
+                    <li><i class="fa-solid fa-clock"></i> Senin - Jumat: 08.00 - 16.00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
+        </div>
+    </footer>
+
+    <!-- Form Submit Javascript Handler -->
+    <script>
+        document.getElementById('layananForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nik = document.getElementById('nik').value;
+            const namaLengkap = document.getElementById('nama').value;
+            const email = document.getElementById('email').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            const jenisSurat = document.getElementById('jenisSurat').value;
+            const keterangan = document.getElementById('keterangan').value;
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+
+            fetch('/layanan/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nik: nik,
+                    namaLengkap: namaLengkap,
+                    email: email,
+                    whatsapp: whatsapp,
+                    jenisSurat: jenisSurat,
+                    keterangan: keterangan
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal mengirim pengajuan.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('generated-id').innerText = data.id;
+                document.getElementById('success-alert').style.display = 'block';
+                document.getElementById('layananForm').reset();
+                window.scrollTo({
+                    top: document.getElementById('success-alert').offsetTop - 120,
+                    behavior: 'smooth'
+                });
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan: ' + error.message);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim Pengajuan Surat';
+            });
+        });
+    </script>
+
+</body>
+</html>

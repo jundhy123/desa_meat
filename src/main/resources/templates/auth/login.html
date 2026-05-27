@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrator - Desa Meat</title>
+    <!-- Outfit & Inter Fonts -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <div class="login-wrapper">
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <h2>Desa Meat</h2>
+            <p>Portal Kepala & Perangkat Desa</p>
+        </div>
+
+        <!-- Spring Security Error Message -->
+        <div th:if="${param.error}" class="login-error-alert">
+            <i class="fa-solid fa-circle-exclamation"></i> Username atau Password salah.
+        </div>
+
+        <!-- Custom Controller Error Message (Optional fallback) -->
+        <div th:if="${error}" class="login-error-alert" th:text="${error}">
+            Username atau Password salah.
+        </div>
+
+        <!-- Form submits to /auth/login POST (handled by Spring Security) -->
+        <form th:action="@{/auth/login}" method="POST" class="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder="Masukkan username admin..." required autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Masukkan password..." required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>&larr; <a href="/">Kembali ke Beranda</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${destination.nama + ' - Wisata Desa Meat'}">Detail Wisata - Desa Meat</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
+                Desa<span>Meat</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Beranda</a></li>
+                <li><a href="/profil" class="nav-link">Profil</a></li>
+                <li><a href="/wisata" class="nav-link active">Wisata</a></li>
+                <li><a href="/umkm" class="nav-link">UMKM</a></li>
+                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
+                <li><a href="/galeri" class="nav-link">Galeri</a></li>
+                <li><a href="/kontak" class="nav-link">Kontak</a></li>
+                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Destination Image Banner -->
+    <section class="detail-banner" th:style="'background-image: linear-gradient(rgba(12, 74, 110, 0.2), rgba(12, 74, 110, 0.9)), url(' + ${destination.gambar != null ? destination.gambar : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'} + ')'">
+        <div class="detail-banner-overlay">
+            <span class="badge badge-success" style="background-color: var(--lake-light); color: var(--lake-deep); margin-bottom: 0.5rem;"><i class="fa-solid fa-star" style="color: #eab308;"></i> <span th:text="${destination.rating}">4.8</span> Rating</span>
+            <h1 style="font-size: 3rem; color: #fff;" th:text="${destination.nama}">Nama Objek Wisata</h1>
+            <p style="font-size: 1.1rem; color: rgba(255,255,255,0.8);"><i class="fa-solid fa-location-dot"></i> <span th:text="${destination.lokasi}">Lokasi Destinasi</span></p>
+        </div>
+    </section>
+
+    <!-- Detail Contents -->
+    <div class="detail-container">
+        <a href="/wisata" class="btn btn-secondary" style="margin-bottom: 2rem; color: var(--lake-deep); border-color: var(--border-color); background-color: #fff;"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Wisata</a>
+        
+        <div class="detail-card">
+            <div class="detail-section">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-file-lines" style="color: var(--lake-primary);"></i> Deskripsi Wisata</h3>
+                <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;" th:text="${destination.deskripsi}">Ini adalah deskripsi lengkap mengenai keindahan destinasi wisata ini...</p>
+            </div>
+            
+            <div class="detail-section">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-toolbox" style="color: var(--field-green);"></i> Fasilitas Tersedia</h3>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem;">
+                    <span th:each="facility : ${#strings.arraySplit(destination.fasilitas, ',')}" class="badge" style="font-size: 0.9rem; padding: 0.5rem 1.25rem; background-color: var(--field-light); color: var(--field-green); font-weight: 500;" th:text="${facility}">Fasilitas</span>
+                </div>
+            </div>
+
+            <div class="detail-section" style="border-bottom: none;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-map" style="color: var(--batak-orange);"></i> Informasi Tambahan</h3>
+                <p style="color: var(--text-muted);">Untuk informasi lebih lanjut mengenai pemesanan tempat camping atau sewa homestay, silakan hubungi kontak informasi Desa Meat pada jam operasional kantor kepala desa.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h3>Desa Meat</h3>
+                <p style="margin-bottom: 1.5rem;">Kantor Kepala Desa Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara, Indonesia.</p>
+                <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Navigasi</h4>
+                <ul>
+                    <li><a href="/">Beranda</a></li>
+                    <li><a href="/profil">Profil Desa</a></li>
+                    <li><a href="/wisata">Pariwisata</a></li>
+                    <li><a href="/layanan">Layanan Administratif</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Kontak Informasi</h4>
+                <ul style="color: rgba(255,255,255,0.6);">
+                    <li><i class="fa-solid fa-phone"></i> +62 821-6543-9876</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@desameat.go.id</li>
+                    <li><i class="fa-solid fa-clock"></i> Senin - Jumat: 08.00 - 16.00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

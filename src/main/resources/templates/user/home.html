@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Website Resmi Desa Meat</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
+                Desa<span>Meat</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link active">Beranda</a></li>
+                <li><a href="/profil" class="nav-link">Profil</a></li>
+                <li><a href="/wisata" class="nav-link">Wisata</a></li>
+                <li><a href="/umkm" class="nav-link">UMKM</a></li>
+                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
+                <li><a href="/galeri" class="nav-link">Galeri</a></li>
+                <li><a href="/kontak" class="nav-link">Kontak</a></li>
+                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-tag">Pesona Danau Toba & Budaya Batak</span>
+            <h1>Selamat Datang di Desa Meat</h1>
+            <p>Sebuah desa wisata asri di tepian Danau Toba dengan keindahan alam terasering sawah, pantai berpasir putih, dan warisan budaya tenun Ulos tradisional.</p>
+            <div class="hero-buttons">
+                <a href="/wisata" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Jelajahi Wisata</a>
+                <a href="/layanan" class="btn btn-secondary"><i class="fa-solid fa-file-invoice"></i> Layanan Surat</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Bar -->
+    <section class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">1,240+</div>
+            <div class="stat-label">Penduduk</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">5+</div>
+            <div class="stat-label">Destinasi Wisata</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">25+</div>
+            <div class="stat-label">UMKM Aktif</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">150 Ha</div>
+            <div class="stat-label">Luas Wilayah</div>
+        </div>
+    </section>
+
+    <!-- Welcome Section -->
+    <section class="section">
+        <div class="grid-3" style="grid-template-columns: 1.2fr 1.8fr; gap: 4rem; align-items: center;">
+            <div>
+                <img src="https://images.unsplash.com/photo-1599818816828-4cbcc63e792c?auto=format&fit=crop&w=600&q=80" alt="Lake Toba View" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 4px solid #fff;">
+            </div>
+            <div>
+                <span style="color: var(--lake-teal); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Tentang Desa Kami</span>
+                <h2 style="font-size: 2.25rem; margin-top: 0.5rem; margin-bottom: 1.5rem; line-height: 1.3;">Harmoni Alam Dan Kebudayaan Di Jantung Tobasa</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.25rem;">Desa Meat merupakan salah satu desa yang terletak di Kecamatan Tampahan, Kabupaten Toba, Sumatera Utara. Berada langsung di pesisir Danau Toba, desa ini dikelilingi oleh perbukitan hijau yang memukau dan hamparan sawah berundak-undak yang menakjubkan.</p>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Selain keindahan alamnya, warga Desa Meat tetap memelihara kearifan lokal melalui kerajinan tenun kain Ulos secara tradisional dan budidaya pertanian. Kami berkomitmen untuk memberikan kemudahan pelayanan bagi masyarakat dan menyambut wisatawan dunia dengan keramahan khas Batak.</p>
+                <a href="/profil" class="btn btn-primary" style="background-color: var(--lake-teal);"><i class="fa-solid fa-circle-info"></i> Selengkapnya</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Features / Services Grid -->
+    <section style="background-color: #f1f5f9; padding: 5rem 0;">
+        <div class="section">
+            <div class="section-header">
+                <span style="color: var(--lake-primary); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Layanan & Fitur</span>
+                <h2 class="section-title">Akses Cepat Informasi Desa</h2>
+                <p class="section-subtitle">Gunakan portal layanan desa kami untuk mengakses informasi pariwisata, pengajuan dokumen administratif, serta produk UMKM lokal.</p>
+            </div>
+            
+            <div class="grid-3">
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-body" style="padding: 2rem; text-align: center;">
+                        <div style="width: 60px; height: 60px; background-color: var(--lake-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: var(--lake-primary); font-size: 1.75rem;">
+                            <i class="fa-solid fa-campground"></i>
+                        </div>
+                        <h3 class="card-title">Pariwisata Desa</h3>
+                        <p class="card-desc">Informasi objek wisata alam seperti Pantai Meat, spot camping, penginapan (homestay), dan keindahan lanskap Danau Toba.</p>
+                        <a href="/wisata" style="color: var(--lake-primary); font-weight: 600;">Jelajahi Wisata <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-body" style="padding: 2rem; text-align: center;">
+                        <div style="width: 60px; height: 60px; background-color: var(--field-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: var(--field-green); font-size: 1.75rem;">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="card-title">Layanan Surat Online</h3>
+                        <p class="card-desc">Ajukan permohonan surat keterangan administratif (SKU, SKTM, dll) langsung secara online tanpa mengantre di kantor desa.</p>
+                        <a href="/layanan" style="color: var(--field-green); font-weight: 600;">Ajukan Surat <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="card">
+                    <div class="card-body" style="padding: 2rem; text-align: center;">
+                        <div style="width: 60px; height: 60px; background-color: #ffedd5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: var(--batak-orange); font-size: 1.75rem;">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                        </div>
+                        <h3 class="card-title">UMKM & Ekonomi</h3>
+                        <p class="card-desc">Dukung produk ekonomi lokal warga Desa Meat mulai dari kopi Toba, kerajinan kayu, olahan ikan mas, hingga kain tenun Ulos.</p>
+                        <a href="/umkm" style="color: var(--batak-orange); font-weight: 600;">Lihat Produk <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h3>Desa Meat</h3>
+                <p style="margin-bottom: 1.5rem;">Kantor Kepala Desa Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara, Indonesia.</p>
+                <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Navigasi</h4>
+                <ul>
+                    <li><a href="/">Beranda</a></li>
+                    <li><a href="/profil">Profil Desa</a></li>
+                    <li><a href="/wisata">Pariwisata</a></li>
+                    <li><a href="/layanan">Layanan Administratif</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Kontak Informasi</h4>
+                <ul style="color: rgba(255,255,255,0.6);">
+                    <li><i class="fa-solid fa-phone"></i> +62 821-6543-9876</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@desameat.go.id</li>
+                    <li><i class="fa-solid fa-clock"></i> Senin - Jumat: 08.00 - 16.00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

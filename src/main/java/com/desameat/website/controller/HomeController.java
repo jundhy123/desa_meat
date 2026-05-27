@@ -31,8 +31,5 @@ public class HomeController {
         return "user/umkm";
     }
 
-    @GetMapping("/kontak")
-    public String kontak() {
-        return "user/kontak";
-    }
+
 }

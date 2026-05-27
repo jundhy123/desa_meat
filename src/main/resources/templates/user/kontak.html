@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak Desa - Desa Meat</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <!-- HEADER: Memanggil dari fragment agar tidak berbeda dengan halaman lain -->
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
+
+    <!-- HERO -->
+    <section class="hero"
+        style="height: 50vh; background:
+        linear-gradient(rgba(12,74,110,0.7), rgba(15,23,42,0.8)),
+        url('/images/lake_toba.jpg') center/cover no-repeat;">
+
+        <div class="hero-content">
+            <div class="hero-tag">Informasi Kontak</div>
+            <h1>Hubungi Desa Meat Balige</h1>
+            <p>Informasi alamat kantor desa, nomor telepon, email, dan layanan masyarakat.</p>
+        </div>
+    </section>
+
+    <!-- SECTION KONTAK -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Kontak Desa</h2>
+            <p class="section-subtitle">Hubungi kami untuk informasi layanan, administrasi, dan kegiatan desa.</p>
+        </div>
+
+        <div class="grid-3">
+            <!-- CARD ALAMAT -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-tag tag-blue">Alamat</div>
+                    <h3 class="card-title">Kantor Desa</h3>
+                    <p class="card-desc">Jl. Desa Meat Balige, Kabupaten Toba, Sumatera Utara.</p>
+                </div>
+            </div>
+
+            <!-- CARD TELEPON -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-tag tag-green">Telepon</div>
+                    <h3 class="card-title">Nomor Telepon</h3>
+                    <p class="card-desc">0812-3456-7890</p>
+                </div>
+            </div>
+
+            <!-- CARD EMAIL -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-tag tag-orange">Email</div>
+                    <h3 class="card-title">Email Desa</h3>
+                    <p class="card-desc">desameat@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER: Memanggil dari fragment agar konsisten -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

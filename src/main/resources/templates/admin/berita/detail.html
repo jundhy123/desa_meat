@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Berita - Desa Meat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --sidebar-width: 250px; }
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+        #sidebar { width: var(--sidebar-width); min-height: 100vh; background: linear-gradient(180deg, #1e293b, #334155); position: fixed; top: 0; left: 0; z-index: 100; }
+        #sidebar .brand { padding: 20px 16px; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; }
+        #sidebar .nav-link { color: rgba(255,255,255,0.7); padding: 10px 16px; border-radius: 8px; margin: 2px 8px; transition: all 0.2s; }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+        #sidebar .nav-link i { width: 20px; margin-right: 8px; }
+        #content { margin-left: var(--sidebar-width); }
+        .topbar { background: white; padding: 14px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    </style>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="brand"><i class="fas fa-leaf me-2 text-success"></i>Desa Meat</div>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/admin/berita}"><i class="fas fa-newspaper"></i>Berita</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/pengumuman}"><i class="fas fa-bullhorn"></i>Pengumuman</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+    </ul>
+</nav>
+
+<div id="content">
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Detail Berita</h6>
+        <span class="badge bg-dark"><i class="fas fa-user me-1"></i>Admin</span>
+    </div>
+
+    <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold mb-0"><i class="fas fa-newspaper me-2 text-primary"></i>Detail Berita</h4>
+                <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/berita}">Berita</a></li>
+                    <li class="breadcrumb-item active">Detail</li>
+                </ol></nav>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/berita/edit/{id}(id=${berita.id})}" class="btn btn-warning"><i class="fas fa-edit me-2"></i>Edit</a>
+                <a th:href="@{/admin/berita}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold" th:text="${berita.judul}"></h3>
+                        <div class="d-flex gap-2 mb-4">
+                            <span class="badge bg-primary-subtle text-primary" th:text="${berita.kategori}"></span>
+                            <span th:text="${berita.status}"
+                                  th:class="${berita.status.name() == 'PUBLISHED'} ? 'badge bg-success' :
+                                            (${berita.status.name() == 'DRAFT'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"></span>
+                        </div>
+                        <div class="border-top pt-3">
+                            <p style="white-space: pre-wrap; line-height: 1.8;" th:text="${berita.konten}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header bg-transparent py-3">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Informasi</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr><td class="text-muted">Penulis</td><td class="fw-semibold" th:text="${berita.penulis ?: '-'}"></td></tr>
+                            <tr><td class="text-muted">Dibuat</td><td class="fw-semibold" th:text="${#temporals.format(berita.tanggalDibuat, 'dd MMM yyyy HH:mm')}"></td></tr>
+                            <tr><td class="text-muted">Diupdate</td><td class="fw-semibold" th:text="${#temporals.format(berita.tanggalDiupdate, 'dd MMM yyyy HH:mm')}"></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-transparent py-3">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-toggle-on me-2"></i>Ubah Status</h6>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/berita/status/{id}(id=${berita.id})}" method="post" class="d-flex gap-2">
+                            <select name="status" class="form-select">
+                                <option value="DRAFT" th:selected="${berita.status.name() == 'DRAFT'}">DRAFT</option>
+                                <option value="PUBLISHED" th:selected="${berita.status.name() == 'PUBLISHED'}">PUBLISHED</option>
+                                <option value="ARCHIVED" th:selected="${berita.status.name() == 'ARCHIVED'}">ARCHIVED</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

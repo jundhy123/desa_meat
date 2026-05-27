@@ -8,10 +8,11 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home() {
+        
         return "user/home";
     }
 
-    @GetMapping("/profil")
+    @GetMapping("/profil2")
     public String profil() {
         return "user/profil";
     }

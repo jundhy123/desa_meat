@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kelola Berita - Desa Meat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --sidebar-width: 250px; }
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+        #sidebar { width: var(--sidebar-width); min-height: 100vh; background: linear-gradient(180deg, #1e293b, #334155); position: fixed; top: 0; left: 0; z-index: 100; }
+        #sidebar .brand { padding: 20px 16px; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; }
+        #sidebar .nav-link { color: rgba(255,255,255,0.7); padding: 10px 16px; border-radius: 8px; margin: 2px 8px; transition: all 0.2s; }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+        #sidebar .nav-link i { width: 20px; margin-right: 8px; }
+        #content { margin-left: var(--sidebar-width); }
+        .topbar { background: white; padding: 14px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .table thead th { background: #f8fafc; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; border: none; }
+        .table td { vertical-align: middle; border-color: #f1f5f9; }
+        .btn-action { padding: 4px 9px; font-size: 0.8rem; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="brand"><i class="fas fa-leaf me-2 text-success"></i>Desa Meat</div>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/admin/berita}"><i class="fas fa-newspaper"></i>Berita</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/pengumuman}"><i class="fas fa-bullhorn"></i>Pengumuman</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+    </ul>
+</nav>
+
+<div id="content">
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Kelola Berita</h6>
+        <span class="badge bg-dark"><i class="fas fa-user me-1"></i>Admin</span>
+    </div>
+
+    <div class="p-4">
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold mb-0"><i class="fas fa-newspaper me-2 text-primary"></i>Berita</h4>
+                <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Berita</li>
+                </ol></nav>
+            </div>
+            <a th:href="@{/admin/berita/tambah}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Tambah Berita</a>
+        </div>
+
+        <!-- Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/berita}" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">Cari</label>
+                        <input type="text" name="keyword" class="form-control" placeholder="Cari judul..." th:value="${keyword}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Kategori</label>
+                        <select name="kategori" class="form-select">
+                            <option value="">Semua</option>
+                            <option th:each="k : ${kategoriList}" th:value="${k}" th:text="${k}" th:selected="${k.name() == kategori}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua</option>
+                            <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}" th:selected="${s.name() == status}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabel -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">No</th>
+                                <th>Judul</th>
+                                <th>Penulis</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(beritaList)}">
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-inbox fa-3x d-block mb-2 opacity-50"></i>Tidak ada berita
+                                </td>
+                            </tr>
+                            <tr th:each="b, i : ${beritaList}">
+                                <td class="ps-4 text-muted" th:text="${currentPage * 10 + i.count}"></td>
+                                <td>
+                                    <div class="fw-semibold" th:text="${#strings.abbreviate(b.judul, 45)}"></div>
+                                    <small class="text-muted" th:text="${#strings.abbreviate(b.konten, 70)}"></small>
+                                </td>
+                                <td th:text="${b.penulis ?: '-'}"></td>
+                                <td><span class="badge bg-primary-subtle text-primary" th:text="${b.kategori}"></span></td>
+                                <td>
+                                    <span th:text="${b.status}"
+                                          th:class="${b.status.name() == 'PUBLISHED'} ? 'badge bg-success' :
+                                                    (${b.status.name() == 'DRAFT'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"></span>
+                                </td>
+                                <td><small th:text="${#temporals.format(b.tanggalDibuat, 'dd MMM yyyy')}"></small></td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a th:href="@{/admin/berita/detail/{id}(id=${b.id})}" class="btn btn-action btn-outline-info" title="Detail"><i class="fas fa-eye"></i></a>
+                                        <a th:href="@{/admin/berita/edit/{id}(id=${b.id})}" class="btn btn-action btn-outline-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <form th:action="@{/admin/berita/hapus/{id}(id=${b.id})}" method="post" onsubmit="return confirm('Hapus berita ini?')">
+                                            <button type="submit" class="btn btn-action btn-outline-danger" title="Hapus"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="p-3 border-top d-flex justify-content-between align-items-center" th:if="${totalPages > 1}">
+                    <small class="text-muted">Halaman <strong th:text="${currentPage + 1}"></strong> dari <strong th:text="${totalPages}"></strong></small>
+                    <nav><ul class="pagination pagination-sm mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/berita(page=${currentPage - 1},keyword=${keyword},kategori=${kategori},status=${status})}"><i class="fas fa-chevron-left"></i></a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link" th:href="@{/admin/berita(page=${i},keyword=${keyword},kategori=${kategori},status=${status})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/berita(page=${currentPage + 1},keyword=${keyword},kategori=${kategori},status=${status})}"><i class="fas fa-chevron-right"></i></a>
+                        </li>
+                    </ul></nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

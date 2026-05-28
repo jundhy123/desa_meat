@@ -1,329 +1,161 @@
 package com.desameat.website.controller;
 
-import com.desameat.website.dto.DashboardStatsDTO;
-import com.desameat.website.model.Berita;
-import com.desameat.website.model.Berita.KategoriBerita;
-import com.desameat.website.model.Berita.StatusBerita;
-import com.desameat.website.model.Pengumuman;
-import com.desameat.website.model.Pengumuman.PrioritasPengumuman;
-import com.desameat.website.model.Pengumuman.StatusPengumuman;
-import com.desameat.website.service.BeritaService;
-import com.desameat.website.service.PengumumanService;
-import jakarta.validation.Valid;
+import java.util.ArrayList; 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.desameat.website.model.Penduduk;
+import com.desameat.website.service.PendudukService;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private BeritaService beritaService;
+    @Autowired 
+    private PendudukService service;
 
-    @Autowired
-    private PengumumanService pengumumanService;
-
-    // ============================
-    // DASHBOARD
-    // ============================
+    // 1. HALAMAN DASHBOARD ADMIN
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setTotalBerita(beritaService.hitungTotal());
-        stats.setBeritaPublished(beritaService.hitungByStatus(StatusBerita.PUBLISHED));
-        stats.setBeritaDraft(beritaService.hitungByStatus(StatusBerita.DRAFT));
-        stats.setTotalPengumuman(pengumumanService.hitungTotal());
-        stats.setPengumumanAktif(pengumumanService.hitungByStatus(StatusPengumuman.AKTIF));
-        stats.setPengumumanNonaktif(pengumumanService.hitungByStatus(StatusPengumuman.NONAKTIF));
-        stats.setBeritaKategoriBerita(beritaService.hitungByKategori(KategoriBerita.BERITA));
-        stats.setBeritaKategoriPengumuman(beritaService.hitungByKategori(KategoriBerita.PENGUMUMAN));
-        stats.setBeritaKategoriAcara(beritaService.hitungByKategori(KategoriBerita.ACARA));
-        stats.setBeritaKategoriInformasi(beritaService.hitungByKategori(KategoriBerita.INFORMASI));
-
-        model.addAttribute("stats", stats);
-        model.addAttribute("beritaTerbaru", beritaService.beritaTerbaru());
-        model.addAttribute("pengumumanTerbaru", pengumumanService.pengumumanTerbaru());
         model.addAttribute("activePage", "dashboard");
+
+        // Ambil map statistik gabungan dari PendudukService dengan aman
+        Map<String, Object> pendudukStats;
+        try {
+            pendudukStats = service.getStatistik();
+            if (pendudukStats == null) {
+                pendudukStats = new HashMap<>();
+            }
+        } catch (Exception e) {
+            pendudukStats = new HashMap<>();
+        }
+
+        // Sediakan isi Map 'stats' untuk data Berita & Pengumuman agar tidak error
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalBerita", 0); 
+        stats.put("beritaPublished", 0);
+        stats.put("totalPengumuman", 0); 
+        stats.put("pengumumanAktif", 0);
+        stats.put("beritaDraft", 0);                     
+        stats.put("pengumumanNonaktif", 0);              
+        stats.put("beritaKategoriBerita", 0);            
+        stats.put("beritaKategoriPengumuman", 0);        
+        stats.put("beritaKategoriAcara", 0);             
+        stats.put("beritaKategoriInformasi", 0);          
+        model.addAttribute("stats", stats);
+
+        // Kirim data statistik penduduk ke HTML Dashboard
+        model.addAttribute("totalPenduduk", pendudukStats.getOrDefault("total", 0));
+        model.addAttribute("statGender", pendudukStats.getOrDefault("gender", new HashMap<>()));
+        model.addAttribute("statPekerjaan", pendudukStats.getOrDefault("pekerjaan", new HashMap<>()));
+
+        // Sediakan objek list kosong untuk tabel bawah dashboard
+        model.addAttribute("beritaTerbaru", new ArrayList<>());
+        model.addAttribute("pengumumanTerbaru", new ArrayList<>());
+
         return "admin/dashboard";
     }
 
-    // ============================
-    // BERITA - LIST
-    // ============================
-    @GetMapping("/berita")
-    public String daftarBerita(
-            @RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "") String kategori,
-            @RequestParam(defaultValue = "") String status,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-
-        Page<Berita> beritaPage = beritaService.cariDenganFilter(keyword, kategori, status, page, 10);
-        model.addAttribute("beritaList", beritaPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", beritaPage.getTotalPages());
-        model.addAttribute("totalItems", beritaPage.getTotalElements());
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("kategori", kategori);
-        model.addAttribute("status", status);
-        model.addAttribute("kategoriList", KategoriBerita.values());
-        model.addAttribute("statusList", StatusBerita.values());
-        model.addAttribute("activePage", "berita");
-        return "admin/berita/daftar";
-    }
-
-    // BERITA - FORM TAMBAH
-    @GetMapping("/berita/tambah")
-    public String formTambahBerita(Model model) {
-        model.addAttribute("berita", new Berita());
-        model.addAttribute("kategoriList", KategoriBerita.values());
-        model.addAttribute("statusList", StatusBerita.values());
-        model.addAttribute("isEdit", false);
-        model.addAttribute("activePage", "berita");
-        return "admin/berita/form";
-    }
-
-    // BERITA - SIMPAN
-    @PostMapping("/berita/tambah")
-    public String simpanBerita(
-            @Valid @ModelAttribute("berita") Berita berita,
-            BindingResult result,
-            @RequestParam(value = "fileGambar", required = false) MultipartFile fileGambar,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("kategoriList", KategoriBerita.values());
-            model.addAttribute("statusList", StatusBerita.values());
-            model.addAttribute("isEdit", false);
-            return "admin/berita/form";
-        }
+    // 2. HALAMAN UTAMA PENDUDUK (Aman dari bentrok fragment navbar & database)
+    @GetMapping("/penduduk")
+    public String penduduk(Model model, @RequestParam(required = false) String cari) {
+        model.addAttribute("activePage", "penduduk");
+        
+        // Ambil statistik asli, jika gagal/null buatkan fallback kosongan agar fragment navbar tidak Error 500
+        Map<String, Object> pendudukStats;
         try {
-            beritaService.simpan(berita, fileGambar);
-            redirectAttributes.addFlashAttribute("successMsg", "Berita berhasil ditambahkan!");
+            pendudukStats = service.getStatistik();
+            if (pendudukStats == null) {
+                pendudukStats = new HashMap<>();
+            }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
+            pendudukStats = new HashMap<>();
         }
-        return "redirect:/admin/berita";
-    }
-
-    // BERITA - FORM EDIT
-    @GetMapping("/berita/edit/{id}")
-    public String formEditBerita(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        return beritaService.cariById(id).map(berita -> {
-            model.addAttribute("berita", berita);
-            model.addAttribute("kategoriList", KategoriBerita.values());
-            model.addAttribute("statusList", StatusBerita.values());
-            model.addAttribute("isEdit", true);
-            model.addAttribute("activePage", "berita");
-            return "admin/berita/form";
-        }).orElseGet(() -> {
-            ra.addFlashAttribute("errorMsg", "Berita tidak ditemukan!");
-            return "redirect:/admin/berita";
-        });
-    }
-
-    // BERITA - UPDATE
-    @PostMapping("/berita/edit/{id}")
-    public String updateBerita(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("berita") Berita berita,
-            BindingResult result,
-            @RequestParam(value = "fileGambar", required = false) MultipartFile fileGambar,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("kategoriList", KategoriBerita.values());
-            model.addAttribute("statusList", StatusBerita.values());
-            model.addAttribute("isEdit", true);
-            return "admin/berita/form";
+        // Pastikan variabel 'total' ada di dalam map statistik
+        pendudukStats.putIfAbsent("total", 0);
+        model.addAttribute("statistik", pendudukStats);
+        
+        // Sediakan isi Map 'stats' kosong juga di halaman ini, berjaga-jaga jika fragment sidebar memanggilnya
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalBerita", 0);
+        stats.put("totalPengumuman", 0);
+        model.addAttribute("stats", stats);
+        
+        // Proteksi awal flash attribute 'sukses'
+        if (!model.containsAttribute("sukses")) {
+            model.addAttribute("sukses", null);
         }
+        
+        // Ambil data asli dari database dengan pengaman try-catch
         try {
-            beritaService.update(id, berita, fileGambar);
-            redirectAttributes.addFlashAttribute("successMsg", "Berita berhasil diupdate!");
+            if (cari != null && !cari.isEmpty()) {
+                model.addAttribute("pendudukList", service.cariByNama(cari));
+                model.addAttribute("cari", cari);
+            } else {
+                model.addAttribute("pendudukList", service.getAllPenduduk());
+            }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
+            // Jika database kosong atau query eror, gagalkan ke list kosong (mencegah layaran putih 500)
+            model.addAttribute("pendudukList", new ArrayList<Penduduk>());
         }
-        return "redirect:/admin/berita";
+        
+        return "admin/penduduk"; 
     }
 
-    // BERITA - DETAIL
-    @GetMapping("/berita/detail/{id}")
-    public String detailBerita(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        return beritaService.cariById(id).map(berita -> {
-            model.addAttribute("berita", berita);
-            model.addAttribute("activePage", "berita");
-            return "admin/berita/detail";
-        }).orElseGet(() -> {
-            ra.addFlashAttribute("errorMsg", "Berita tidak ditemukan!");
-            return "redirect:/admin/berita";
-        });
+    // 3. HALAMAN FORM TAMBAH PENDUDUK
+    @GetMapping("/penduduk/tambah")
+    public String formTambah(Model model) {
+        model.addAttribute("activePage", "penduduk");
+        model.addAttribute("penduduk", new Penduduk()); 
+        return "admin/penduduk-form";
     }
 
-    // BERITA - HAPUS
-    @PostMapping("/berita/hapus/{id}")
-    public String hapusBerita(@PathVariable Long id, RedirectAttributes ra) {
+    // 4. HALAMAN FORM EDIT PENDUDUK
+    @GetMapping("/penduduk/edit/{id}")
+    public String formEdit(@PathVariable Long id, Model model) {
         try {
-            beritaService.hapus(id);
-            ra.addFlashAttribute("successMsg", "Berita berhasil dihapus!");
+            Penduduk p = service.getById(id);
+            if (p == null) return "redirect:/admin/penduduk";
+            model.addAttribute("activePage", "penduduk");
+            model.addAttribute("penduduk", p); 
+            return "admin/penduduk-form";
         } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal hapus: " + e.getMessage());
+            return "redirect:/admin/penduduk";
         }
-        return "redirect:/admin/berita";
     }
 
-    // BERITA - UBAH STATUS
-    @PostMapping("/berita/status/{id}")
-    public String ubahStatusBerita(@PathVariable Long id, @RequestParam StatusBerita status, RedirectAttributes ra) {
+    // 5. PROSES SIMPAN DATA (POST)
+    @PostMapping("/penduduk/simpan")
+    public String simpan(@ModelAttribute Penduduk p, RedirectAttributes ra) {
         try {
-            beritaService.ubahStatus(id, status);
-            ra.addFlashAttribute("successMsg", "Status berita diubah!");
+            service.simpan(p);
+            ra.addFlashAttribute("sukses", "Data penduduk berhasil disimpan!");
         } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
+            ra.addFlashAttribute("error", "Gagal menyimpan data!");
         }
-        return "redirect:/admin/berita";
+        return "redirect:/admin/penduduk";
     }
 
-    // ============================
-    // PENGUMUMAN - LIST
-    // ============================
-    @GetMapping("/pengumuman")
-    public String daftarPengumuman(
-            @RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "") String status,
-            @RequestParam(defaultValue = "") String prioritas,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-
-        Page<Pengumuman> pengumumanPage = pengumumanService.cariDenganFilter(keyword, status, prioritas, page, 10);
-        model.addAttribute("pengumumanList", pengumumanPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", pengumumanPage.getTotalPages());
-        model.addAttribute("totalItems", pengumumanPage.getTotalElements());
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("status", status);
-        model.addAttribute("prioritas", prioritas);
-        model.addAttribute("statusList", StatusPengumuman.values());
-        model.addAttribute("prioritasList", PrioritasPengumuman.values());
-        model.addAttribute("activePage", "pengumuman");
-        return "admin/pengumuman/daftar";
-    }
-
-    // PENGUMUMAN - FORM TAMBAH
-    @GetMapping("/pengumuman/tambah")
-    public String formTambahPengumuman(Model model) {
-        model.addAttribute("pengumuman", new Pengumuman());
-        model.addAttribute("statusList", StatusPengumuman.values());
-        model.addAttribute("prioritasList", PrioritasPengumuman.values());
-        model.addAttribute("isEdit", false);
-        model.addAttribute("activePage", "pengumuman");
-        return "admin/pengumuman/form";
-    }
-
-    // PENGUMUMAN - SIMPAN
-    @PostMapping("/pengumuman/tambah")
-    public String simpanPengumuman(
-            @Valid @ModelAttribute("pengumuman") Pengumuman pengumuman,
-            BindingResult result,
-            Model model,
-            RedirectAttributes ra) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("statusList", StatusPengumuman.values());
-            model.addAttribute("prioritasList", PrioritasPengumuman.values());
-            model.addAttribute("isEdit", false);
-            return "admin/pengumuman/form";
-        }
+    // 6. PROSES HAPUS DATA (POST)
+    @PostMapping("/penduduk/hapus/{id}")
+    public String hapus(@PathVariable Long id, RedirectAttributes ra) {
         try {
-            pengumumanService.simpan(pengumuman);
-            ra.addFlashAttribute("successMsg", "Pengumuman berhasil ditambahkan!");
+            service.hapus(id);
+            ra.addFlashAttribute("sukses", "Data penduduk berhasil dihapus!");
         } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
+            ra.addFlashAttribute("error", "Gagal menghapus data!");
         }
-        return "redirect:/admin/pengumuman";
-    }
-
-    // PENGUMUMAN - FORM EDIT
-    @GetMapping("/pengumuman/edit/{id}")
-    public String formEditPengumuman(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        return pengumumanService.cariById(id).map(p -> {
-            model.addAttribute("pengumuman", p);
-            model.addAttribute("statusList", StatusPengumuman.values());
-            model.addAttribute("prioritasList", PrioritasPengumuman.values());
-            model.addAttribute("isEdit", true);
-            model.addAttribute("activePage", "pengumuman");
-            return "admin/pengumuman/form";
-        }).orElseGet(() -> {
-            ra.addFlashAttribute("errorMsg", "Pengumuman tidak ditemukan!");
-            return "redirect:/admin/pengumuman";
-        });
-    }
-
-    // PENGUMUMAN - UPDATE
-    @PostMapping("/pengumuman/edit/{id}")
-    public String updatePengumuman(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("pengumuman") Pengumuman pengumuman,
-            BindingResult result,
-            Model model,
-            RedirectAttributes ra) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("statusList", StatusPengumuman.values());
-            model.addAttribute("prioritasList", PrioritasPengumuman.values());
-            model.addAttribute("isEdit", true);
-            return "admin/pengumuman/form";
-        }
-        try {
-            pengumumanService.update(id, pengumuman);
-            ra.addFlashAttribute("successMsg", "Pengumuman berhasil diupdate!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
-        }
-        return "redirect:/admin/pengumuman";
-    }
-
-    // PENGUMUMAN - DETAIL
-    @GetMapping("/pengumuman/detail/{id}")
-    public String detailPengumuman(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        return pengumumanService.cariById(id).map(p -> {
-            model.addAttribute("pengumuman", p);
-            model.addAttribute("activePage", "pengumuman");
-            return "admin/pengumuman/detail";
-        }).orElseGet(() -> {
-            ra.addFlashAttribute("errorMsg", "Pengumuman tidak ditemukan!");
-            return "redirect:/admin/pengumuman";
-        });
-    }
-
-    // PENGUMUMAN - HAPUS
-    @PostMapping("/pengumuman/hapus/{id}")
-    public String hapusPengumuman(@PathVariable Long id, RedirectAttributes ra) {
-        try {
-            pengumumanService.hapus(id);
-            ra.addFlashAttribute("successMsg", "Pengumuman berhasil dihapus!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal hapus: " + e.getMessage());
-        }
-        return "redirect:/admin/pengumuman";
-    }
-
-    // PENGUMUMAN - UBAH STATUS
-    @PostMapping("/pengumuman/status/{id}")
-    public String ubahStatusPengumuman(@PathVariable Long id, @RequestParam StatusPengumuman status, RedirectAttributes ra) {
-        try {
-            pengumumanService.ubahStatus(id, status);
-            ra.addFlashAttribute("successMsg", "Status pengumuman diubah!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg", "Gagal: " + e.getMessage());
-        }
-        return "redirect:/admin/pengumuman";
+        return "redirect:/admin/penduduk";
     }
 }

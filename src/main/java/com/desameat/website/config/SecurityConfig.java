@@ -12,27 +12,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
+        @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/profil", "/berita/**", "/wisata/**", "/umkm/**", "/layanan/**", "/auth/**").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/static/**").permitAll()
+                .requestMatchers("/", "/home", "/penduduk", "/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login")
+                .loginProcessingUrl("/auth/login") 
                 .defaultSuccessUrl("/admin/dashboard", true)
                 .permitAll()
             )
-            .logout(logout -> logout
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/")
-                .permitAll()
-            );
+            .logout(logout -> logout.logoutUrl("/auth/logout").logoutSuccessUrl("/"));
         return http.build();
     }
 

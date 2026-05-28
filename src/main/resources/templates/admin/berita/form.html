@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Berita - Desa Meat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --sidebar-width: 250px; }
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+        #sidebar { width: var(--sidebar-width); min-height: 100vh; background: linear-gradient(180deg, #1e293b, #334155); position: fixed; top: 0; left: 0; z-index: 100; }
+        #sidebar .brand { padding: 20px 16px; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; }
+        #sidebar .nav-link { color: rgba(255,255,255,0.7); padding: 10px 16px; border-radius: 8px; margin: 2px 8px; transition: all 0.2s; }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+        #sidebar .nav-link i { width: 20px; margin-right: 8px; }
+        #content { margin-left: var(--sidebar-width); }
+        .topbar { background: white; padding: 14px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    </style>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="brand"><i class="fas fa-leaf me-2 text-success"></i>Desa Meat</div>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/admin/berita}"><i class="fas fa-newspaper"></i>Berita</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/pengumuman}"><i class="fas fa-bullhorn"></i>Pengumuman</a></li>
+                <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'profil'} ? 'active'" th:href="@{/admin/profil}">
+                <i class="fas fa-bullhorn"></i>Profil
+            </a>
+        </li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+    </ul>
+</nav>
+
+<div id="content">
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold" th:text="${isEdit} ? 'Edit Berita' : 'Tambah Berita'"></h6>
+        <span class="badge bg-dark"><i class="fas fa-user me-1"></i>Admin</span>
+    </div>
+
+    <div class="p-4">
+        <div class="mb-4">
+            <h4 class="fw-bold mb-0"><i class="fas fa-newspaper me-2 text-primary"></i><span th:text="${isEdit} ? 'Edit Berita' : 'Tambah Berita'"></span></h4>
+            <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/berita}">Berita</a></li>
+                <li class="breadcrumb-item active" th:text="${isEdit} ? 'Edit' : 'Tambah'"></li>
+            </ol></nav>
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form th:action="${isEdit} ? @{/admin/berita/edit/{id}(id=${berita.id})} : @{/admin/berita/tambah}"
+                      th:object="${berita}" method="post" enctype="multipart/form-data">
+
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Judul <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{judul}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('judul')} ? 'is-invalid'"
+                                   placeholder="Judul berita...">
+                            <div class="invalid-feedback" th:errors="*{judul}"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Penulis</label>
+                            <input type="text" th:field="*{penulis}" class="form-control" placeholder="Nama penulis...">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Kategori</label>
+                            <select th:field="*{kategori}" class="form-select">
+                                <option value="">-- Pilih --</option>
+                                <option th:each="k : ${kategoriList}" th:value="${k}" th:text="${k}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select th:field="*{status}" class="form-select">
+                                <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Gambar</label>
+                            <input type="file" name="fileGambar" class="form-control" accept="image/*">
+                            <div class="form-text">Format JPG/PNG, maks 10MB.</div>
+                            <div th:if="${berita.gambar != null}" class="mt-1">
+                                <small class="text-muted">Gambar saat ini: <span class="badge bg-secondary" th:text="${berita.gambar}"></span></small>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Konten <span class="text-danger">*</span></label>
+                            <textarea th:field="*{konten}" rows="12" class="form-control"
+                                      th:classappend="${#fields.hasErrors('konten')} ? 'is-invalid'"
+                                      placeholder="Tulis konten berita..."></textarea>
+                            <div class="invalid-feedback" th:errors="*{konten}"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i><span th:text="${isEdit} ? 'Update' : 'Simpan'"></span>
+                        </button>
+                        <a th:href="@{/admin/berita}" class="btn btn-outline-secondary px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head(title='Data Penduduk')}"></head>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<body class="admin-body">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar d-flex justify-content-between align-items-center px-4 py-3">
+        <h5 class="mb-0 fw-bold">Data Penduduk</h5>
+        <div>
+            <span class="text-muted me-2" sec:authentication="name">Admin</span>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 py-3">
+
+        <!-- Alert sukses / error -->
+        <div th:if="${sukses}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${sukses}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- ── KARTU STATISTIK ── -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-3 p-3 fs-3">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Total Penduduk</div>
+                            <div class="fs-3 fw-bold" th:text="${statistik.total}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon bg-info bg-opacity-10 text-info rounded-3 p-3 fs-3">
+                            <i class="bi bi-gender-male"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Laki-laki</div>
+                            <div class="fs-3 fw-bold" th:text="${statistik.lakiLaki}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon bg-pink bg-opacity-10 text-danger rounded-3 p-3 fs-3">
+                            <i class="bi bi-gender-female"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Perempuan</div>
+                            <div class="fs-3 fw-bold" th:text="${statistik.perempuan}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── GRAFIK STATISTIK ── -->
+        <div class="row g-3 mb-4">
+            <!-- Agama -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-white border-0 fw-semibold pt-3">Agama</div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <canvas id="chartAgama" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- Pendidikan -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-white border-0 fw-semibold pt-3">Pendidikan</div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <canvas id="chartPendidikan" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- Status Pernikahan -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-white border-0 fw-semibold pt-3">Status Pernikahan</div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <canvas id="chartStatus" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- Kelompok Usia -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-white border-0 fw-semibold pt-3">Kelompok Usia</div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <canvas id="chartUsia" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PANEL TAMBAH / EDIT + TABEL ── -->
+        <div class="row g-3">
+
+            <!-- Form Tambah / Edit -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-white border-0 fw-semibold pt-3">
+                        <span th:if="${pendudukEdit == null}">Tambah Penduduk</span>
+                        <span th:if="${pendudukEdit != null}">Edit Penduduk</span>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Form Tambah -->
+                        <form th:if="${pendudukEdit == null}"
+                              th:action="@{/admin/penduduk/simpan}"
+                              th:object="${pendudukBaru}"
+                              method="post">
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">NIK <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{nik}" class="form-control form-control-sm"
+                                       maxlength="16" placeholder="16 digit NIK" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{nama}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select th:field="*{jenisKelamin}" class="form-select form-select-sm" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="LAKI_LAKI">Laki-laki</option>
+                                    <option value="PEREMPUAN">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Tanggal Lahir <span class="text-danger">*</span></label>
+                                <input type="date" th:field="*{tanggalLahir}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Agama <span class="text-danger">*</span></label>
+                                <select th:field="*{agama}" class="form-select form-select-sm" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option>Islam</option>
+                                    <option>Kristen</option>
+                                    <option>Katolik</option>
+                                    <option>Hindu</option>
+                                    <option>Buddha</option>
+                                    <option>Konghucu</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Pendidikan <span class="text-danger">*</span></label>
+                                <select th:field="*{pendidikan}" class="form-select form-select-sm" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option>Tidak Sekolah</option>
+                                    <option>SD</option>
+                                    <option>SMP</option>
+                                    <option>SMA</option>
+                                    <option>D3</option>
+                                    <option>S1</option>
+                                    <option>S2</option>
+                                    <option>S3</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Pekerjaan <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{pekerjaan}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Status Pernikahan <span class="text-danger">*</span></label>
+                                <select th:field="*{statusPernikahan}" class="form-select form-select-sm" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option>Belum Menikah</option>
+                                    <option>Menikah</option>
+                                    <option>Cerai Hidup</option>
+                                    <option>Cerai Mati</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Alamat <span class="text-danger">*</span></label>
+                                <textarea th:field="*{alamat}" class="form-control form-control-sm" rows="2" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-plus-circle me-1"></i> Simpan
+                            </button>
+                        </form>
+
+                        <!-- Form Edit -->
+                        <form th:if="${pendudukEdit != null}"
+                              th:action="@{/admin/penduduk/simpan}"
+                              th:object="${pendudukEdit}"
+                              method="post">
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">NIK</label>
+                                <input type="text" th:field="*{nik}" class="form-control form-control-sm"
+                                       maxlength="16" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Nama Lengkap</label>
+                                <input type="text" th:field="*{nama}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Jenis Kelamin</label>
+                                <select th:field="*{jenisKelamin}" class="form-select form-select-sm" required>
+                                    <option value="LAKI_LAKI">Laki-laki</option>
+                                    <option value="PEREMPUAN">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Tanggal Lahir</label>
+                                <input type="date" th:field="*{tanggalLahir}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Agama</label>
+                                <select th:field="*{agama}" class="form-select form-select-sm" required>
+                                    <option>Islam</option>
+                                    <option>Kristen</option>
+                                    <option>Katolik</option>
+                                    <option>Hindu</option>
+                                    <option>Buddha</option>
+                                    <option>Konghucu</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Pendidikan</label>
+                                <select th:field="*{pendidikan}" class="form-select form-select-sm" required>
+                                    <option>Tidak Sekolah</option>
+                                    <option>SD</option>
+                                    <option>SMP</option>
+                                    <option>SMA</option>
+                                    <option>D3</option>
+                                    <option>S1</option>
+                                    <option>S2</option>
+                                    <option>S3</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Pekerjaan</label>
+                                <input type="text" th:field="*{pekerjaan}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Status Pernikahan</label>
+                                <select th:field="*{statusPernikahan}" class="form-select form-select-sm" required>
+                                    <option>Belum Menikah</option>
+                                    <option>Menikah</option>
+                                    <option>Cerai Hidup</option>
+                                    <option>Cerai Mati</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Alamat</label>
+                                <textarea th:field="*{alamat}" class="form-control form-control-sm" rows="2" required></textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-warning btn-sm flex-grow-1">
+                                    <i class="bi bi-pencil-square me-1"></i> Update
+                                </button>
+                                <a href="/admin/penduduk" class="btn btn-secondary btn-sm">Batal</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Daftar Penduduk</span>
+                        <!-- Pencarian -->
+                        <form th:action="@{/admin/penduduk}" method="get" class="d-flex gap-2">
+                            <input type="text" name="cari" th:value="${cari}"
+                                   class="form-control form-control-sm" placeholder="Cari nama...">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <a th:if="${cari}" href="/admin/penduduk" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </form>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>NIK</th>
+                                        <th>Nama</th>
+                                        <th>L/P</th>
+                                        <th>Usia</th>
+                                        <th>Agama</th>
+                                        <th>Pendidikan</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${#lists.isEmpty(pendudukList)}">
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                                            Belum ada data penduduk.
+                                        </td>
+                                    </tr>
+                                    <tr th:each="p, stat : ${pendudukList}">
+                                        <td th:text="${stat.count}" class="text-muted small"></td>
+                                        <td class="small" th:text="${p.nik}"></td>
+                                        <td th:text="${p.nama}"></td>
+                                        <td>
+                                            <span th:if="${p.jenisKelamin.name() == 'LAKI_LAKI'}"
+                                                  class="badge bg-info text-white">L</span>
+                                            <span th:if="${p.jenisKelamin.name() == 'PEREMPUAN'}"
+                                                  class="badge bg-danger text-white">P</span>
+                                        </td>
+                                        <td th:text="${p.usia}"></td>
+                                        <td class="small" th:text="${p.agama}"></td>
+                                        <td class="small" th:text="${p.pendidikan}"></td>
+                                        <td>
+                                            <span class="badge"
+                                                  th:classappend="${p.statusPernikahan == 'Menikah'} ? 'bg-success' : 'bg-secondary'"
+                                                  th:text="${p.statusPernikahan}">
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/penduduk/edit/{id}(id=${p.id})}"
+                                               class="btn btn-warning btn-sm py-0 px-2">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form th:action="@{/admin/penduduk/hapus/{id}(id=${p.id})}"
+                                                  method="post" class="d-inline"
+                                                  onsubmit="return confirm('Hapus data '+this.dataset.nama+'?')"
+                                                  th:data-nama="${p.nama}">
+                                                <button type="submit" class="btn btn-danger btn-sm py-0 px-2">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /row -->
+    </div><!-- /container -->
+</div><!-- /main-content -->
+
+<!-- ── DATA STATISTIK untuk Chart.js (diinject dari Thymeleaf) ── -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const stat = {
+        agama:           /*[[${statistik.agama}]]*/ {},
+        pendidikan:      /*[[${statistik.pendidikan}]]*/ {},
+        statusPernikahan:/*[[${statistik.statusPernikahan}]]*/ {},
+        kelompokUsia:    /*[[${statistik.kelompokUsia}]]*/ {}
+    };
+    /*]]>*/
+
+    const COLORS = [
+        '#4361ee','#f72585','#4cc9f0','#7209b7',
+        '#3a86ff','#ff006e','#fb5607','#8338ec'
+    ];
+
+    function buildDoughnut(id, dataObj) {
+        const labels = Object.keys(dataObj);
+        const data   = Object.values(dataObj);
+        new Chart(document.getElementById(id), {
+            type: 'doughnut',
+            data: { labels, datasets:[{ data, backgroundColor: COLORS, borderWidth: 2 }] },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    function buildBar(id, dataObj) {
+        const labels = Object.keys(dataObj);
+        const data   = Object.values(dataObj);
+        new Chart(document.getElementById(id), {
+            type: 'bar',
+            data: { labels, datasets:[{
+                data, backgroundColor: COLORS,
+                borderRadius: 4, borderSkipped: false
+            }]},
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { ticks: { stepSize: 1 }, beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    buildDoughnut('chartAgama',     stat.agama);
+    buildDoughnut('chartPendidikan', stat.pendidikan);
+    buildDoughnut('chartStatus',    stat.statusPernikahan);
+    buildBar('chartUsia',           stat.kelompokUsia);
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

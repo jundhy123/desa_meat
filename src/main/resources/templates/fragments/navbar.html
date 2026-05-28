@@ -1,0 +1,19 @@
+<header th:fragment="navbar">
+    <div class="nav-container">
+        <a th:href="@{/}" class="logo" style="text-decoration: none;">
+            <div class="logo-icon">D</div>
+            Desa <span>Meat</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a th:href="@{/}" class="nav-link">Beranda</a></li>
+            <li><a th:href="@{/profil}" class="nav-link">Profil</a></li>
+            <li><a th:href="@{/wisata}" class="nav-link">Wisata</a></li>
+            <li><a th:href="@{/umkm}" class="nav-link">UMKM</a></li>
+            <li><a th:href="@{/layanan}" class="nav-link">Layanan Surat</a></li>
+            <li><a th:href="@{/galeri}" class="nav-link">Galeri</a></li>
+            <li><a th:href="@{/kontak}" class="nav-link">Kontak</a></li>
+            <li><a th:href="@{/auth/login}" class="btn-login">Login Admin</a></li>
+        </ul>
+    </div>
+</header>

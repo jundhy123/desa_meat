@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Desa Meat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --sidebar-width: 250px; }
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            position: fixed; top: 0; left: 0; z-index: 100;
+        }
+        #sidebar .brand {
+            padding: 20px 16px;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: 700; font-size: 1.1rem;
+        }
+        #sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 10px 16px; border-radius: 8px;
+            margin: 2px 8px; transition: all 0.2s;
+        }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active {
+            background: rgba(255,255,255,0.15); color: white;
+        }
+        #sidebar .nav-link i { width: 20px; margin-right: 8px; }
+
+        #content { margin-left: var(--sidebar-width); }
+        .topbar {
+            background: white; padding: 14px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .stat-card { border: none; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .table thead th { background: #f8fafc; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; border: none; }
+        .table td { vertical-align: middle; border-color: #f1f5f9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+    <div class="brand">
+        <i class="fas fa-leaf me-2 text-success"></i>Desa Meat
+    </div>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
+                <i class="fas fa-tachometer-alt"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'berita'} ? 'active'" th:href="@{/admin/berita}">
+                <i class="fas fa-newspaper"></i>Berita
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'pengumuman'} ? 'active'" th:href="@{/admin/pengumuman}">
+                <i class="fas fa-bullhorn"></i>Pengumuman
+            </a>
+        </li>
+                <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'profil'} ? 'active'" th:href="@{/admin/profil}">
+                <i class="fas fa-bullhorn"></i>Profil
+            </a>
+        </li>
+        <!-- Menu anggota lain bisa ditambahkan di sini -->
+        <li class="mt-auto">
+            <a class="nav-link" th:href="@{/auth/logout}">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Topbar -->
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Dashboard</h6>
+        <span class="badge bg-dark"><i class="fas fa-user me-1"></i>Admin</span>
+    </div>
+
+    <div class="p-4">
+        <!-- Flash Messages -->
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small fw-semibold text-uppercase mb-1">Total Berita</p>
+                            <h2 class="fw-bold mb-1" th:text="${stats.totalBerita}">0</h2>
+                            <span class="badge bg-success-subtle text-success">
+                                <span th:text="${stats.beritaPublished}">0</span> Published
+                            </span>
+                        </div>
+                        <div class="rounded-circle p-3" style="background:#dbeafe;">
+                            <i class="fas fa-newspaper fa-xl" style="color:#3b82f6;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small fw-semibold text-uppercase mb-1">Total Pengumuman</p>
+                            <h2 class="fw-bold mb-1" th:text="${stats.totalPengumuman}">0</h2>
+                            <span class="badge bg-success-subtle text-success">
+                                <span th:text="${stats.pengumumanAktif}">0</span> Aktif
+                            </span>
+                        </div>
+                        <div class="rounded-circle p-3" style="background:#fef3c7;">
+                            <i class="fas fa-bullhorn fa-xl" style="color:#f59e0b;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small fw-semibold text-uppercase mb-1">Berita Draft</p>
+                            <h2 class="fw-bold mb-1" th:text="${stats.beritaDraft}">0</h2>
+                            <span class="text-muted small">Belum dipublish</span>
+                        </div>
+                        <div class="rounded-circle p-3" style="background:#f3e8ff;">
+                            <i class="fas fa-pen fa-xl" style="color:#a855f7;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small fw-semibold text-uppercase mb-1">Pengumuman Nonaktif</p>
+                            <h2 class="fw-bold mb-1" th:text="${stats.pengumumanNonaktif}">0</h2>
+                            <span class="text-muted small">Perlu diperbarui</span>
+                        </div>
+                        <div class="rounded-circle p-3" style="background:#fee2e2;">
+                            <i class="fas fa-times-circle fa-xl" style="color:#ef4444;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS + KATEGORI -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-5">
+                <div class="card h-100">
+                    <div class="card-header bg-transparent border-bottom py-3">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2 text-primary"></i>Berita per Kategori</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="small">Berita</span>
+                                <span class="small fw-bold" th:text="${stats.beritaKategoriBerita}">0</span>
+                            </div>
+                            <div class="progress" style="height:8px;">
+                                <div class="progress-bar bg-primary"
+                                     th:style="'width:' + (${stats.totalBerita > 0 ? stats.beritaKategoriBerita * 100 / stats.totalBerita : 0}) + '%'"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="small">Pengumuman</span>
+                                <span class="small fw-bold" th:text="${stats.beritaKategoriPengumuman}">0</span>
+                            </div>
+                            <div class="progress" style="height:8px;">
+                                <div class="progress-bar bg-warning"
+                                     th:style="'width:' + (${stats.totalBerita > 0 ? stats.beritaKategoriPengumuman * 100 / stats.totalBerita : 0}) + '%'"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="small">Acara</span>
+                                <span class="small fw-bold" th:text="${stats.beritaKategoriAcara}">0</span>
+                            </div>
+                            <div class="progress" style="height:8px;">
+                                <div class="progress-bar bg-success"
+                                     th:style="'width:' + (${stats.totalBerita > 0 ? stats.beritaKategoriAcara * 100 / stats.totalBerita : 0}) + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="small">Informasi</span>
+                                <span class="small fw-bold" th:text="${stats.beritaKategoriInformasi}">0</span>
+                            </div>
+                            <div class="progress" style="height:8px;">
+                                <div class="progress-bar bg-info"
+                                     th:style="'width:' + (${stats.totalBerita > 0 ? stats.beritaKategoriInformasi * 100 / stats.totalBerita : 0}) + '%'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card h-100">
+                    <div class="card-header bg-transparent border-bottom py-3">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-bolt me-2 text-warning"></i>Aksi Cepat</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <a th:href="@{/admin/berita/tambah}" class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2">
+                                    <i class="fas fa-plus-circle fa-2x"></i>
+                                    <span class="fw-semibold">Tambah Berita</span>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a th:href="@{/admin/pengumuman/tambah}" class="btn btn-outline-warning w-100 py-3 d-flex flex-column align-items-center gap-2">
+                                    <i class="fas fa-plus-circle fa-2x"></i>
+                                    <span class="fw-semibold">Tambah Pengumuman</span>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a th:href="@{/admin/berita}" class="btn btn-outline-secondary w-100 py-3 d-flex flex-column align-items-center gap-2">
+                                    <i class="fas fa-list fa-2x"></i>
+                                    <span class="fw-semibold">Kelola Berita</span>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a th:href="@{/admin/pengumuman}" class="btn btn-outline-secondary w-100 py-3 d-flex flex-column align-items-center gap-2">
+                                    <i class="fas fa-list fa-2x"></i>
+                                    <span class="fw-semibold">Kelola Pengumuman</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABEL TERBARU -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-newspaper me-2 text-primary"></i>Berita Terbaru</h6>
+                        <a th:href="@{/admin/berita}" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead><tr><th class="ps-3">Judul</th><th>Kategori</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(beritaTerbaru)}">
+                                    <td colspan="3" class="text-center text-muted py-4">Belum ada berita</td>
+                                </tr>
+                                <tr th:each="b : ${beritaTerbaru}">
+                                    <td class="ps-3">
+                                        <a th:href="@{/admin/berita/detail/{id}(id=${b.id})}"
+                                           th:text="${#strings.abbreviate(b.judul, 35)}"
+                                           class="text-decoration-none fw-semibold text-dark"></a>
+                                    </td>
+                                    <td><span class="badge bg-secondary-subtle text-secondary" th:text="${b.kategori}"></span></td>
+                                    <td>
+                                        <span th:text="${b.status}"
+                                              th:class="${b.status.name() == 'PUBLISHED'} ? 'badge bg-success' :
+                                                        (${b.status.name() == 'DRAFT'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-bullhorn me-2 text-warning"></i>Pengumuman Terbaru</h6>
+                        <a th:href="@{/admin/pengumuman}" class="btn btn-sm btn-outline-warning">Lihat Semua</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead><tr><th class="ps-3">Judul</th><th>Prioritas</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(pengumumanTerbaru)}">
+                                    <td colspan="3" class="text-center text-muted py-4">Belum ada pengumuman</td>
+                                </tr>
+                                <tr th:each="p : ${pengumumanTerbaru}">
+                                    <td class="ps-3">
+                                        <a th:href="@{/admin/pengumuman/detail/{id}(id=${p.id})}"
+                                           th:text="${#strings.abbreviate(p.judul, 35)}"
+                                           class="text-decoration-none fw-semibold text-dark"></a>
+                                    </td>
+                                    <td>
+                                        <span th:text="${p.prioritas}"
+                                              th:class="${p.prioritas.name() == 'URGENT'} ? 'badge bg-danger' :
+                                                        (${p.prioritas.name() == 'TINGGI'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${p.status}"
+                                              th:class="${p.status.name() == 'AKTIF'} ? 'badge bg-success' : 'badge bg-secondary'"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

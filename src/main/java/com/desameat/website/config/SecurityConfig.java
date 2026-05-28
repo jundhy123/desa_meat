@@ -17,13 +17,15 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/profil", "/berita/**", "/wisata/**", "/umkm/**", "/layanan", "/layanan/lacak", "/auth/**", "/static/**", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/admin/**", "/wisata/admin/**").hasRole("ADMIN")
+                .requestMatchers("/", "/home", "/profil", "/berita/**", "/wisata/**", "/umkm/**", "/layanan/**", "/auth/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/static/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
-                .defaultSuccessUrl("/admin/dashboard")
+                .loginProcessingUrl("/auth/login")
+                .defaultSuccessUrl("/admin/dashboard", true)
                 .permitAll()
             )
             .logout(logout -> logout

@@ -21,16 +21,6 @@ public class HomeController {
         return "user/berita";
     }
 
-    @GetMapping("/galeri")
-    public String galeri() {
-        return "user/galeri";
-    }
-
-    @GetMapping("/umkm")
-    public String umkm() {
-        return "user/umkm";
-    }
-
     @GetMapping("/kontak")
     public String kontak() {
         return "user/kontak";

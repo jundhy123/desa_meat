@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Website Resmi Desa Meat</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
+                Desa<span>Meat</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Beranda</a></li>
+                <li><a href="/profil" class="nav-link active">Profil</a></li>
+                <li><a href="/wisata" class="nav-link">Wisata</a></li>
+                <li><a href="/umkm" class="nav-link">UMKM</a></li>
+                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
+                <li><a href="/galeri" class="nav-link">Galeri</a></li>
+                <li><a href="/kontak" class="nav-link">Kontak</a></li>
+                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
+            </ul>
+        </div>
+    </header>
+<!-- CONTENT (FOLLOW CONTACT STYLE) -->
+<section class="contact-section">
+
+    <div class="contact-container">
+        <center>
+
+        <!-- TITLE -->
+        <div class="contact-header">
+            <h2>Profil Desa</h2>
+            <p>Visi dan Misi Desa Meat</p>
+        </div>
+<br><br>
+                    <!-- PROFIL CARD -->
+        <div th:if="${profil != null}" class="contact-grid">
+
+            <!-- VISI -->
+            <div class="contact-card">
+                <h3><i class="fa-solid fa-eye"></i> Visi Desa</h3>
+
+                <div class="contact-list">
+                    <div th:each="v : ${profil.visi}" class="contact-item">
+                        <div class="contact-icon">
+                            <span th:text="${v.urutan}"></span>
+                        </div>
+                        <div class="contact-text">
+                            <p th:text="${v.isi}"></p>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+<br><br>
+            <!-- MISI -->
+            <div class="contact-card">
+                <h3><i class="fa-solid fa-bullseye"></i> Misi Desa</h3>
+
+                <div class="contact-list">
+                    <div th:each="m : ${profil.misi}" class="contact-item">
+                        <div class="contact-icon">
+                            <span th:text="${m.urutan}"></span>
+                        </div>
+                        <div class="contact-text">
+                            <p th:text="${m.isi}"></p>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div th:if="${profil == null}" class="contact-card">
+            <p>Data profil belum tersedia.</p>
+        </div>
+        </center>
+
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
+    </div>
+</footer>
+
+</body>
+</html>

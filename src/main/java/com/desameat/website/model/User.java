@@ -1,4 +1,5 @@
 package com.desameat.website.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -25,6 +26,10 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private ProfilDesa profilDesa;
 
     public User() {}
 
@@ -83,4 +88,12 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public ProfilDesa getProfilDesa() {
+        return profilDesa;
+    }
+
+    public void setProfilDesa(ProfilDesa profilDesa) {
+        this.profilDesa = profilDesa;
+}
 }

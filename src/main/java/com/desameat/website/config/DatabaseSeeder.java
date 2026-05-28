@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import com.desameat.website.model.ProfilDesa;
+import com.desameat.website.repository.ProfilRepository;
+
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -22,6 +25,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Autowired
     private WisataRepository wisataRepository;
+
+    @Autowired
+    private ProfilRepository profilRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -51,6 +57,18 @@ public class DatabaseSeeder implements CommandLineRunner {
             admin.setRole(adminRole);
             userRepository.save(admin);
             System.out.println("Default admin user created successfully! (admin/admin)");
+        }
+
+        // Profil Admin
+        User admin = userRepository.findByUsername("admin").orElse(null);
+
+        if (admin != null && profilRepository.count() == 0) {
+            ProfilDesa profil = new ProfilDesa();
+            profil.setUser(admin);
+
+            profilRepository.save(profil);
+
+            System.out.println("Profil Desa created and linked to admin!");
         }
 
         // 3. Seed Default Wisata Destinations if empty

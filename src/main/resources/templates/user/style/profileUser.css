@@ -1,0 +1,65 @@
+/* ===== PROFIL PAGE ===== */
+.profil-wrapper {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.profil-title {
+    font-size: 32px;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+/* SECTION */
+.profil-section {
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #1e1e1e;
+}
+
+/* LIST BOX */
+.list-box {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+/* ITEM */
+.list-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    max-width: 700px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    text-align: left;
+    width: 100%;
+}
+
+/* NUMBER */
+.number {
+    font-weight: bold;
+    color: #2e7d32;
+    min-width: 30px;
+}
+
+/* TEXT */
+.text {
+    flex: 1;
+    line-height: 1.6;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    margin-top: 50px;
+    color: #777;
+}

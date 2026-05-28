@@ -1,0 +1,32 @@
+<nav id="sidebar" th:fragment="sidebar">
+    <div class="brand">
+        <i class="fas fa-leaf me-2 text-success"></i>Desa Meat
+    </div>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
+                <i class="fas fa-tachometer-alt"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'berita'} ? 'active'" th:href="@{/admin/berita}">
+                <i class="fas fa-newspaper"></i>Berita
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'pengumuman'} ? 'active'" th:href="@{/admin/pengumuman}">
+                <i class="fas fa-bullhorn"></i>Pengumuman
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'penduduk'} ? 'active'" th:href="@{/admin/penduduk}">
+                <i class="fas fa-users"></i>Penduduk
+            </a>
+        </li>
+        <li class="nav-item mt-3">
+            <a class="nav-link" th:href="@{/auth/logout}">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</nav>

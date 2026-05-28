@@ -68,13 +68,18 @@
                 <i class="fas fa-bullhorn"></i>Pengumuman
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'penduduk'} ? 'active'" th:href="@{/admin/penduduk}">
-                <i class="fas fa-users"></i>Penduduk
-            </a>
-        </li>
+<li class="nav-item">
+              <a class="nav-link" th:classappend="${activePage == 'penduduk'} ? 'active'" th:href="@{/admin/penduduk}">
+                  <i class="fas fa-users"></i>Penduduk
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" th:classappend="${activePage == 'profil'} ? 'active'" th:href="@{/admin/profil}">
+                  <i class="fas fa-bullhorn"></i>Profil
+              </a>
+          </li>
         <li class="mt-auto">
-            <a class="nav-link" th:href="@{/logout}">
+            <a class="nav-link" th:href="@{/auth/logout}">
                 <i class="fas fa-sign-out-alt"></i>Logout
             </a>
         </li>

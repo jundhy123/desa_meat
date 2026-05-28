@@ -8,10 +8,11 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home() {
+        
         return "user/home";
     }
 
-    @GetMapping("/profil")
+    @GetMapping("/profil2")
     public String profil() {
         return "user/profil";
     }
@@ -21,6 +22,13 @@ public class HomeController {
         return "user/berita";
     }
 
+<
+    @GetMapping("/kontak")
+    public String kontak() {
+        return "user/kontak";
+    }
+}
+=======
     @GetMapping("/galeri")
     public String galeri() {
         return "user/galeri";
@@ -33,3 +41,4 @@ public class HomeController {
 
 
 }
+

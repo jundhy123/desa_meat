@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unggah Produk UMKM Baru - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-plus text-emerald-450"></i>
+                <span>Unggah Produk UMKM Baru</span>
+            </h1>
+            <a href="/admin/umkm" class="bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-xs px-4 py-2.5 rounded-xl transition-all border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </header>
+
+        <!-- Main Workspace Body -->
+        <div class="p-8 max-w-4xl">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
+                <div>
+                    <h3 class="font-display font-bold text-base text-white">Formulir Produk UMKM</h3>
+                    <p class="text-xs text-slate-400">Pastikan informasi detail produk atau hasil karya pengrajin di bawah diisi secara lengkap.</p>
+                </div>
+
+                <!-- Formulir Spring POST -->
+                <form th:action="@{/admin/umkm/save}" th:object="${product}" method="post" enctype="multipart/form-data" class="space-y-6 text-xs text-slate-300">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{rating}" />
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Nama Produk Pengrajin <span class="text-rose-500">*</span></label>
+                        <input type="text" th:field="*{namaProduk}" placeholder="Contoh: Tenun Ulos Sadum, Ukiran Kayu Meat..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Kategori</label>
+                            <select th:field="*{kategori}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
+                                <option value="KERAJINAN">KERAJINAN KREATIF</option>
+                                <option value="TENUN">KAIN TENUN ULOS</option>
+                                <option value="KULINER">KULINER KHAS</option>
+                                <option value="PERTANIAN">AGROBISNIS / PERTANIAN</option>
+                                <option value="AURA_ALAM">INDUSTRI RUMAH TANGGA</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Harga Jual (Rp) <span class="text-rose-500">*</span></label>
+                            <input type="number" th:field="*{harga}" placeholder="Tanpa titik/koma" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Pemilik / Pembuat <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{pembuat}" placeholder="Nama pemilik usaha..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Nomor WA / HP <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{kontak}" placeholder="Contoh: 0812345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Pilih Gambar Produk</label>
+                        <input type="file" name="imageFile" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" />
+                        <input type="hidden" th:field="*{gambar}" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Deskripsi Lengkap Keunggulan Produk <span class="text-rose-500">*</span></label>
+                        <textarea th:field="*{deskripsi}" rows="10" placeholder="Jelaskan mengenai bahan dasar pembuatnya, ketahanan produk, adat/khas tenun, dan keunikannya..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-emerald-500 outline-none transition-all resize-none" required></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+                        <a href="/admin/umkm" class="bg-slate-800 hover:bg-slate-700 text-slate-350 font-bold px-5 py-3 rounded-xl transition-colors">Batal</a>
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-xl transition-colors shadow-md">Simpan Produk</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

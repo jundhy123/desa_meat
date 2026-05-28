@@ -1,166 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pariwisata - Website Resmi Desa Meat</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<head th:replace="fragments/head :: head('Destinasi Wisata')"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
-                Desa<span>Meat</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Beranda</a></li>
-                <li><a href="/profil" class="nav-link">Profil</a></li>
-                <li><a href="/wisata" class="nav-link active">Wisata</a></li>
-                <li><a href="/umkm" class="nav-link">UMKM</a></li>
-                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
-                <li><a href="/galeri" class="nav-link">Galeri</a></li>
-                <li><a href="/kontak" class="nav-link">Kontak</a></li>
-                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
-            </ul>
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Page Header Hero Banner -->
+    <div class="bg-brand-navy text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <span class="text-xs font-bold text-emerald-400 block tracking-widest uppercase">Ekowisata Danau Toba</span>
+            <h1 class="text-3xl md:text-4xl font-display font-black">Pesona Eksotis Desa Meat</h1>
+            <p class="text-slate-400 max-w-lg mx-auto text-xs md:text-sm">
+                Temukan bentang alam, pantai tersembunyi, lintasan paralayang, hingga sawah berundak-undak yang memanjakan jiwa Anda di desa kami.
+            </p>
         </div>
-    </header>
+    </div>
 
-    <!-- Page Header banner -->
-    <section class="hero" style="height: 40vh; min-height: 250px; background: linear-gradient(rgba(12, 74, 110, 0.7), rgba(12, 74, 110, 0.9)), url('https://images.unsplash.com/photo-1599818816828-4cbcc63e792c?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
-        <div class="hero-content">
-            <h1>Destinasi Wisata Desa Meat</h1>
-            <p>Jelajahi surga tersembunyi dengan pemandangan langsung ke Danau Toba.</p>
-        </div>
-    </section>
-
-    <!-- Listings Section -->
-    <section class="section">
-        <div class="section-header">
-            <span style="color: var(--lake-teal); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Eksplorasi Alam</span>
-            <h2 class="section-title">Tempat Terbaik Untuk Dikunjungi</h2>
-            <p class="section-subtitle">Dari pantai pasir putih tepian danau hingga perbukitan hijau tempat menikmati matahari terbit.</p>
-        </div>
-
-        <!-- Dynamic Destination Loop -->
-        <div class="grid-3" th:if="${destinations != null and !destinations.isEmpty()}">
-            <div class="card" th:each="dest : ${destinations}">
-                <div class="card-img" th:style="'background-image: url(' + ${dest.gambar != null ? dest.gambar : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80'} + ')'"></div>
-                <div class="card-body">
-                    <span class="card-tag tag-blue"><i class="fa-solid fa-star" style="color: #eab308;"></i> <span th:text="${dest.rating}">4.8</span></span>
-                    <h3 class="card-title" th:text="${dest.nama}">Pantai Meat</h3>
-                    <p class="card-desc" th:text="${#strings.abbreviate(dest.deskripsi, 100)}">Pantai berpasir putih yang luas dengan air danau tenang...</p>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-                        <span th:each="facility : ${#strings.arraySplit(dest.fasilitas, ',')}" class="badge badge-process" style="font-size: 0.75rem; background-color: var(--lake-light); color: var(--lake-deep);" th:text="${facility}">Camping</span>
+    <!-- Touristic lists container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div th:each="wisata : ${destinations}" class="bg-white rounded-3xl overflow-hidden border border-slate-150/80 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group">
+                <div class="h-52 overflow-hidden bg-slate-100 relative">
+                    <img th:src="${wisata.gambar != null ? wisata.gambar : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80'}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm shadow-sm text-emerald-800 font-bold px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-star text-amber-500"></i>
+                        <span th:text="${wisata.rating}">4.9</span>
+                    </span>
+                </div>
+                
+                <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-widest" th:text="${wisata.lokasi}">Desa Meat, Balige</span>
+                        <h3 class="text-base font-bold text-slate-900" th:text="${wisata.nama}">Pantai Pasir Putih Bulu-Bulu</h3>
+                        <p class="text-xs text-slate-550 line-clamp-3 leading-relaxed" th:text="${wisata.deskripsi}">Hamparan tebing hijau eksotis dengan hembusan angin sejuk langsung dari Danau Toba.</p>
                     </div>
-                    <div class="card-meta">
-                        <span><i class="fa-solid fa-location-dot"></i> <span th:text="${dest.lokasi}">Desa Meat</span></span>
-                        <a th:href="@{/wisata/{id}(id=${dest.id})}" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;"><i class="fa-solid fa-eye"></i> Detail</a>
+                    
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                        <span th:text="${wisata.fasilitas != null ? wisata.fasilitas : 'Fasilitas: Parkir, Toilet, Gazebo'}">Fasilitas: Gazebo, Camping Ground</span>
+                        <a th:href="@{/wisata/{id}(id=${wisata.id})}" class="text-emerald-600 font-bold hover:underline">Detail</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Empty Fallback / Mock Destinations if DB is empty -->
-        <div th:if="${destinations == null or destinations.isEmpty()}">
-            <div style="background-color: var(--lake-light); border: 1px dashed var(--lake-primary); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-bottom: 3rem; color: var(--lake-deep); font-weight: 500;">
-                <i class="fa-solid fa-circle-info"></i> Belum ada data pariwisata aktif di database. Berikut adalah destinasi rekomendasi lokal Desa Meat.
-            </div>
-            
-            <div class="grid-3">
-                <!-- Card Mock 1 -->
-                <div class="card">
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80')"></div>
-                    <div class="card-body">
-                        <span class="card-tag tag-blue"><i class="fa-solid fa-star" style="color: #eab308;"></i> 4.9</span>
-                        <h3 class="card-title">Pantai Meat</h3>
-                        <p class="card-desc">Pantai dengan hamparan rumput hijau dan pasir putih yang bersih di tepian Danau Toba. Sangat populer untuk tempat berkemah (camping ground) dan berenang.</p>
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-                            <span class="badge" style="font-size: 0.75rem; background-color: var(--lake-light); color: var(--lake-deep);">Camping</span>
-                            <span class="badge" style="font-size: 0.75rem; background-color: var(--lake-light); color: var(--lake-deep);">Sewa Perahu</span>
-                            <span class="badge" style="font-size: 0.75rem; background-color: var(--lake-light); color: var(--lake-deep);">Toilet</span>
-                        </div>
-                        <div class="card-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Pesisir Danau, Desa Meat</span>
-                            <a href="#" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem; pointer-events: none; opacity: 0.7;"><i class="fa-solid fa-eye"></i> Detail</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card Mock 2 -->
-                <div class="card">
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80')"></div>
-                    <div class="card-body">
-                        <span class="card-tag tag-green"><i class="fa-solid fa-star" style="color: #eab308;"></i> 4.8</span>
-                        <h3 class="card-title">Bukit Indah Meat</h3>
-                        <p class="card-desc">Perbukitan hijau yang berdiri gagah mengitari desa. Tempat terbaik untuk menyaksikan panorama sunrise dan landscape keseluruhan Danau Toba dari ketinggian.</p>
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-                            <span class="badge" style="font-size: 0.75rem; background-color: var(--field-light); color: var(--field-green);">Spot Foto</span>
-                            <span class="badge" style="font-size: 0.75rem; background-color: var(--field-light); color: var(--field-green);">Hiking</span>
-                        </div>
-                        <div class="card-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Bukit Tampahan, Desa Meat</span>
-                            <a href="#" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem; pointer-events: none; opacity: 0.7;"><i class="fa-solid fa-eye"></i> Detail</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card Mock 3 -->
-                <div class="card">
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=600&q=80')"></div>
-                    <div class="card-body">
-                        <span class="card-tag tag-orange"><i class="fa-solid fa-star" style="color: #eab308;"></i> 4.7</span>
-                        <h3 class="card-title">Sawah Terasering Meat</h3>
-                        <p class="card-desc">Keindahan bentangan sawah tradisional berundak-undak peninggalan leluhur yang subur. Menawarkan hawa sejuk pedesaan yang menenangkan jiwa.</p>
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-                            <span class="badge" style="font-size: 0.75rem; background-color: #ffedd5; color: var(--batak-orange);">Agrowisata</span>
-                            <span class="badge" style="font-size: 0.75rem; background-color: #ffedd5; color: var(--batak-orange);">Edukasi</span>
-                        </div>
-                        <div class="card-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Sawah Barat, Desa Meat</span>
-                            <a href="#" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem; pointer-events: none; opacity: 0.7;"><i class="fa-solid fa-eye"></i> Detail</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-about">
-                <h3>Desa Meat</h3>
-                <p style="margin-bottom: 1.5rem;">Kantor Kepala Desa Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara, Indonesia.</p>
-                <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
-                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <h4>Navigasi</h4>
-                <ul>
-                    <li><a href="/">Beranda</a></li>
-                    <li><a href="/profil">Profil Desa</a></li>
-                    <li><a href="/wisata">Pariwisata</a></li>
-                    <li><a href="/layanan">Layanan Administratif</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h4>Kontak Informasi</h4>
-                <ul style="color: rgba(255,255,255,0.6);">
-                    <li><i class="fa-solid fa-phone"></i> +62 821-6543-9876</li>
-                    <li><i class="fa-solid fa-envelope"></i> info@desameat.go.id</li>
-                    <li><i class="fa-solid fa-clock"></i> Senin - Jumat: 08.00 - 16.00</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
-        </div>
-    </footer>
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

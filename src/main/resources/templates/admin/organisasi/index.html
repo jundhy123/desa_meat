@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Keorganisasian - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-sitemap text-emerald-450"></i>
+                <span>Manajemen Lembaga Kemasyarakatan Desa (LKD) Meat</span>
+            </h1>
+            <a href="/admin/organisasi/create" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-1.5">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Tambah Lembaga</span>
+            </a>
+        </header>
+
+        <!-- Main Body -->
+        <div class="p-8 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="font-display font-bold text-base text-white">Daftar Lembaga &amp; Organisasi Aktif</h3>
+                        <p class="text-xs text-slate-400">Total data struktur lembaga kemasyarakatan, PKK, Karang Taruna, BPD, LPM yang diverifikasi.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="py-3.5 px-4 font-bold">Lembaga / Singkatan</th>
+                                <th class="py-3.5 px-4 font-bold">Nama Lengkap Organisasi</th>
+                                <th class="py-3.5 px-4 font-bold">Ketua Pengurus</th>
+                                <th class="py-3.5 px-4 font-bold">Jumlah Anggota Aktif</th>
+                                <th class="py-3.5 px-4 font-bold text-right text-slate-400">Aksi Operasi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-850">
+                            <tr th:each="org : ${orgs}" class="hover:bg-slate-850/40 transition-colors">
+                                <td class="py-3.5 px-4">
+                                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-xl text-xs font-black font-display tracking-tight" th:text="${org.singkatan}">PKK</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-bold text-white" th:text="${org.nama}">Pemberdayaan Kesejahteraan Keluarga</td>
+                                <td class="py-3.5 px-4 text-slate-300 font-semibold" th:text="${org.ketua}">Ibu Kades Sianipar</td>
+                                <td class="py-3.5 px-4 text-emerald-400 font-bold" th:text="${org.jumlahAnggota} + ' Orang'">45 Orang</td>
+                                <td class="py-3.5 px-4 text-right space-x-2">
+                                    <a th:href="@{/admin/organisasi/edit/{id}(id=${org.id})}"
+                                       class="bg-slate-800 hover:bg-slate-700 text-amber-400 py-1.5 px-3 rounded-lg border border-slate-700 font-bold text-[11px] transition-all inline-block">
+                                        <i class="fa-solid fa-edit mr-1"></i>Edit
+                                    </a>
+                                    <a th:href="@{/admin/organisasi/delete/{id}(id=${org.id})}" onclick="return confirm('Apakah Anda yakin ingin menghapus struktur lembaga organisasi ini secara permanen?')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white py-1.5 px-3 rounded-lg border border-red-500/20 font-bold text-[11px] transition-all inline-block">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>Hapus
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${orgs == null || orgs.empty}" class="p-12 text-center text-slate-500 space-y-3">
+                        <i class="fa-solid fa-sitemap text-3xl"></i>
+                        <p class="text-xs">Ugh, belum ada organisasi desa yang diarsip. Silakan buat pertama kali!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

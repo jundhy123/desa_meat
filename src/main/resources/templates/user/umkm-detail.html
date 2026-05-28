@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(${item.namaProduk})"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
+
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Main Detail container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Breadcrumbs -->
+        <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-6">
+            <a href="/home" class="hover:text-emerald-600">Beranda</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <a href="/umkm" class="hover:text-emerald-600">Produk UMKM</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <span class="truncate text-slate-600" th:text="${item.namaProduk}">Detail Produk</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            
+            <!-- Left Side: Product image -->
+            <div class="lg:col-span-5 bg-white rounded-3xl p-4 border border-slate-150/70 shadow-sm">
+                <div class="h-64 md:h-96 rounded-2xl overflow-hidden bg-slate-105">
+                    <img th:src="${item.gambar != null ? item.gambar : 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=650&q=80'}" class="w-full h-full object-cover" />
+                </div>
+            </div>
+
+            <!-- Right Side: Product Details -->
+            <div class="lg:col-span-7 bg-white rounded-3xl p-6 md:p-8 border border-slate-150/70 shadow-sm space-y-6">
+                <div class="space-y-2 border-b border-slate-100 pb-5">
+                    <div class="flex items-center justify-between gap-4">
+                        <span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded text-xs uppercase" th:text="${item.kategori}">Tenun</span>
+                        <span class="bg-emerald-500/10 text-emerald-800 text-[11px] px-2.5 py-0.5 rounded-full font-bold">TERSEDIA</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-display font-black text-slate-905" th:text="${item.namaProduk}">Ulos Ragi Hotang Hand-made Balige</h1>
+                    <div class="text-2xl font-display font-bold text-orange-600" th:text="'IDR ' + ${#numbers.formatDecimal(item.harga, 0, 'POINT', 0, 'COMMA')}">IDR 450.000</div>
+                </div>
+
+                <!-- Description info -->
+                <div class="space-y-2">
+                    <h4 class="text-xs uppercase font-bold text-slate-400 tracking-wider">Deskripsi Produk</h4>
+                    <p class="text-sm md:text-base text-slate-600 leading-relaxed whitespace-pre-line" th:text="${item.deskripsi}">
+                        Ulos tradisional ditenun manual (hand-made) dengan rapi, berkelas, memakai benang premium ragi hotang yang tebal, awet, dan bermutu tinggi.
+                    </p>
+                </div>
+
+                <!-- Seller Profiling metadata -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+                    <h4 class="text-xs uppercase font-bold text-emerald-800 tracking-wide mb-3"><i class="fa-solid fa-store mr-1.5"></i> Informasi Produsen / Penjual</h4>
+                    <div class="text-xs md:text-sm space-y-2.5 text-slate-600">
+                        <p class="flex justify-between"><span>Nama Toko / Owner:</span> <strong class="text-slate-800" th:text="${item.pembuat}">Ibu Siregar Balige</strong></p>
+                        <p class="flex justify-between"><span>Nomor WhatsApp:</span> <strong class="text-slate-800" th:text="${item.kontak}">+62 812-3456-7890</strong></p>
+                    </div>
+                </div>
+
+                <!-- Action Button order -->
+                <div class="pt-2">
+                    <a th:href="'https://wa.me/' + ${item.kontak} + '?text=Halo%20' + ${item.pembuat} + ',%20saya%20tertarik%20dengan%20produk%20' + ${item.namaProduk}" class="bg-[#25d366] hover:bg-[#20ba5a] text-center font-bold py-3.5 rounded-2xl text-xs text-white transition-colors flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>Pesan Melalui WhatsApp Seller</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

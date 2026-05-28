@@ -1,14 +1,12 @@
 package com.desameat.website.service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.desameat.website.model.Penduduk;
+import com.desameat.website.repository.PendudukRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desameat.website.model.Penduduk;
-import com.desameat.website.repository.PendudukRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PendudukService {
@@ -20,27 +18,23 @@ public class PendudukService {
         return pendudukRepository.findAll();
     }
 
-    public Penduduk getById(Long id) {
-        return pendudukRepository.findById(id).orElse(null);
+    public Optional<Penduduk> getPendudukByNik(String nik) {
+        return pendudukRepository.findByNik(nik);
     }
 
-    public List<Penduduk> cariByNama(String nama) {
-        return pendudukRepository.findByNamaContainingIgnoreCase(nama);
+    public Optional<Penduduk> getPendudukById(Long id) {
+        return pendudukRepository.findById(id);
     }
 
-    public void simpan(Penduduk penduduk) {
-        pendudukRepository.save(penduduk);
+    public List<Penduduk> searchPenduduk(String query) {
+        return pendudukRepository.findByNamaContainingIgnoreCase(query);
     }
 
-    public void hapus(Long id) {
+    public Penduduk savePenduduk(Penduduk penduduk) {
+        return pendudukRepository.save(penduduk);
+    }
+
+    public void deletePenduduk(Long id) {
         pendudukRepository.deleteById(id);
-    }
-
-    public Map<String, Object> getStatistik() {
-        Map<String, Object> stat = new LinkedHashMap<>();
-        stat.put("total", pendudukRepository.count());
-        stat.put("lakiLaki", pendudukRepository.countByJenisKelamin("Laki-laki"));
-        stat.put("perempuan", pendudukRepository.countByJenisKelamin("Perempuan"));
-        return stat;
     }
 }

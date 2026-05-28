@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Struktur Lembaga Baru - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-plus text-emerald-450"></i>
+                <span>Tambah Struktur Lembaga Baru</span>
+            </h1>
+            <a href="/admin/organisasi" class="bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-xs px-4 py-2.5 rounded-xl transition-all border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="p-8 max-w-4xl">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
+                <div>
+                    <h3 class="font-display font-bold text-base text-white">Formulir Tambah Lembaga</h3>
+                    <p class="text-xs text-slate-400">Pastikan informasi nama organisasi, singkatan, reksa ketua, dan deskripsi sudah sesuai.</p>
+                </div>
+
+                <!-- Formulir Spring POST -->
+                <form th:action="@{/admin/organisasi/save}" th:object="${org}" method="post" class="space-y-6 text-xs text-slate-300">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Nama Lembaga / Organisasi Lengkap <span class="text-rose-500">*</span></label>
+                        <input type="text" th:field="*{nama}" placeholder="Contoh: Badan Permusyawaratan Desa, Karang Taruna..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Singkatan / Akronim <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{singkatan}" placeholder="Contoh: BPD, PKK, LPM..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Nama Ketua <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{ketua}" placeholder="Nama ketua organisasi..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Kategori Lembaga</label>
+                            <select th:field="*{kategori}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
+                                <option value="PKK">PKK</option>
+                                <option value="Karang Taruna">Karang Taruna</option>
+                                <option value="Adat">Lembaga Adat</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Jumlah Anggota Terdaftar</label>
+                            <input type="number" th:field="*{jumlahAnggota}" placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Deskripsi Tugas &amp; Fungsi Utama <span class="text-rose-500">*</span></label>
+                        <textarea th:field="*{deskripsi}" rows="10" placeholder="Jelaskan mengenai program kerja, fungsi utama, visi misi, dan penjelasannya..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-emerald-500 outline-none transition-all resize-none" required></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+                        <a href="/admin/organisasi" class="bg-slate-800 hover:bg-slate-700 text-slate-350 font-bold px-5 py-3 rounded-xl transition-colors">Batal</a>
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-xl transition-colors shadow-md">Simpan Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

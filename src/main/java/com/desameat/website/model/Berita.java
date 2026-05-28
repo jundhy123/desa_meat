@@ -1,8 +1,7 @@
 package com.desameat.website.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "berita")
@@ -12,79 +11,90 @@ public class Berita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Judul tidak boleh kosong")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String judul;
 
-    @NotBlank(message = "Konten tidak boleh kosong")
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String konten;
 
-    @Column(name = "gambar")
+    @Column(nullable = false)
+    private LocalDate tanggal = LocalDate.now();
+
+    @Column(length = 255)
     private String gambar;
 
-    @Column(name = "penulis")
-    private String penulis;
+    @Column(nullable = false, length = 50)
+    private String kategori;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "kategori")
-    private KategoriBerita kategori;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private StatusBerita status = StatusBerita.DRAFT;
-
-    @Column(name = "tanggal_dibuat")
-    private LocalDateTime tanggalDibuat;
-
-    @Column(name = "tanggal_diupdate")
-    private LocalDateTime tanggalDiupdate;
-
-    @PrePersist
-    protected void onCreate() {
-        tanggalDibuat = LocalDateTime.now();
-        tanggalDiupdate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        tanggalDiupdate = LocalDateTime.now();
-    }
-
-    public enum KategoriBerita {
-        BERITA, PENGUMUMAN, ACARA, INFORMASI
-    }
-
-    public enum StatusBerita {
-        DRAFT, PUBLISHED, ARCHIVED
-    }
+    @Column(nullable = false, length = 100)
+    private String penulis = "Admin Desa Meat";
 
     public Berita() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Berita(String judul, String konten, LocalDate tanggal, String gambar, String kategori, String penulis) {
+        this.judul = judul;
+        this.konten = konten;
+        if (tanggal != null) {
+            this.tanggal = tanggal;
+        }
+        this.gambar = gambar;
+        this.kategori = kategori;
+        this.penulis = penulis;
+    }
 
-    public String getJudul() { return judul; }
-    public void setJudul(String judul) { this.judul = judul; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getKonten() { return konten; }
-    public void setKonten(String konten) { this.konten = konten; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getGambar() { return gambar; }
-    public void setGambar(String gambar) { this.gambar = gambar; }
+    public String getJudul() {
+        return judul;
+    }
 
-    public String getPenulis() { return penulis; }
-    public void setPenulis(String penulis) { this.penulis = penulis; }
+    public void setJudul(String judul) {
+        this.judul = judul;
+    }
 
-    public KategoriBerita getKategori() { return kategori; }
-    public void setKategori(KategoriBerita kategori) { this.kategori = kategori; }
+    public String getKonten() {
+        return konten;
+    }
 
-    public StatusBerita getStatus() { return status; }
-    public void setStatus(StatusBerita status) { this.status = status; }
+    public void setKonten(String konten) {
+        this.konten = konten;
+    }
 
-    public LocalDateTime getTanggalDibuat() { return tanggalDibuat; }
-    public void setTanggalDibuat(LocalDateTime tanggalDibuat) { this.tanggalDibuat = tanggalDibuat; }
+    public LocalDate getTanggal() {
+        return tanggal;
+    }
 
-    public LocalDateTime getTanggalDiupdate() { return tanggalDiupdate; }
-    public void setTanggalDiupdate(LocalDateTime tanggalDiupdate) { this.tanggalDiupdate = tanggalDiupdate; }
+    public void setTanggal(LocalDate tanggal) {
+        this.tanggal = tanggal;
+    }
+
+    public String getGambar() {
+        return gambar;
+    }
+
+    public void setGambar(String gambar) {
+        this.gambar = gambar;
+    }
+
+    public String getKategori() {
+        return kategori;
+    }
+
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
+    }
+
+    public String getPenulis() {
+        return penulis;
+    }
+
+    public void setPenulis(String penulis) {
+        this.penulis = penulis;
+    }
 }

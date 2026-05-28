@@ -1,8 +1,6 @@
 package com.desameat.website.model;
 
 import jakarta.persistence.*;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "profil_desa")
@@ -12,24 +10,55 @@ public class ProfilDesa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // One to One ke User (hanya user_id di tabel ini)
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
+    @Column(nullable = false, length = 100)
+    private String namaDesa = "Meat";
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String sejarah;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String visi;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String misi;
+
+    @Column(length = 200)
+    private String kepalaDesa;
+
+    @Column(columnDefinition = "TEXT")
+    private String deskripsiGeografis;
+
+    @Column(columnDefinition = "TEXT")
+    private String alamat;
+
+    // =========================
+    // RELASI KE USER (ADMIN PEMBUAT/PEMELIHARA DATA)
+    // =========================
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "profilDesa", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Visi> visi;
+    // =========================
+    // CONSTRUCTOR
+    // =========================
+    public ProfilDesa() {
+    }
 
-    @OneToMany(mappedBy = "profilDesa", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Misi> misi;
-
-    public ProfilDesa() {}
-
-    public ProfilDesa(User user) {
+    public ProfilDesa(String sejarah, String visi, String misi,
+                      String kepalaDesa, String deskripsiGeografis,
+                      String alamat, User user) {
+        this.sejarah = sejarah;
+        this.visi = visi;
+        this.misi = misi;
+        this.kepalaDesa = kepalaDesa;
+        this.deskripsiGeografis = deskripsiGeografis;
+        this.alamat = alamat;
         this.user = user;
     }
+
+    // =========================
+    // GETTER & SETTER
+    // =========================
 
     public Long getId() {
         return id;
@@ -39,27 +68,67 @@ public class ProfilDesa {
         this.id = id;
     }
 
+    public String getNamaDesa() {
+        return namaDesa;
+    }
+
+    public void setNamaDesa(String namaDesa) {
+        this.namaDesa = namaDesa;
+    }
+
+    public String getSejarah() {
+        return sejarah;
+    }
+
+    public void setSejarah(String sejarah) {
+        this.sejarah = sejarah;
+    }
+
+    public String getVisi() {
+        return visi;
+    }
+
+    public void setVisi(String visi) {
+        this.visi = visi;
+    }
+
+    public String getMisi() {
+        return misi;
+    }
+
+    public void setMisi(String misi) {
+        this.misi = misi;
+    }
+
+    public String getKepalaDesa() {
+        return kepalaDesa;
+    }
+
+    public void setKepalaDesa(String kepalaDesa) {
+        this.kepalaDesa = kepalaDesa;
+    }
+
+    public String getDeskripsiGeografis() {
+        return deskripsiGeografis;
+    }
+
+    public void setDeskripsiGeografis(String deskripsiGeografis) {
+        this.deskripsiGeografis = deskripsiGeografis;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public List<Visi> getVisi() {
-        return visi;
-    }
-
-    public void setVisi(List<Visi> visi) {
-        this.visi = visi;
-    }
-
-    public List<Misi> getMisi() {
-        return misi;
-    }
-
-    public void setMisi(List<Misi> misi) {
-        this.misi = misi;
     }
 }

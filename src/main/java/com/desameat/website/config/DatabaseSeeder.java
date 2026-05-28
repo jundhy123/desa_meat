@@ -1,18 +1,18 @@
 package com.desameat.website.config;
 
+import com.desameat.website.model.ProfilDesa;
 import com.desameat.website.model.Role;
 import com.desameat.website.model.User;
 import com.desameat.website.model.Wisata;
+import com.desameat.website.repository.ProfilRepository;
 import com.desameat.website.repository.RoleRepository;
 import com.desameat.website.repository.UserRepository;
 import com.desameat.website.repository.WisataRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import com.desameat.website.model.ProfilDesa;
-import com.desameat.website.repository.ProfilRepository;
-
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -34,76 +34,108 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Seed Roles
+
+        // =========================
+        // 1. ROLE SEEDER
+        // =========================
         Role adminRole = roleRepository.findByName("ADMIN").orElse(null);
+
         if (adminRole == null) {
             adminRole = new Role("ADMIN");
             roleRepository.save(adminRole);
+            System.out.println("Role ADMIN created!");
         }
 
         Role userRole = roleRepository.findByName("USER").orElse(null);
+
         if (userRole == null) {
             userRole = new Role("USER");
             roleRepository.save(userRole);
+            System.out.println("Role USER created!");
         }
 
-        // 2. Seed Default Admin User (username: admin, password: admin)
+        // =========================
+        // 2. DEFAULT ADMIN
+        // =========================
         if (!userRepository.existsByUsername("admin")) {
+
             User admin = new User();
+
             admin.setUsername("admin");
             admin.setEmail("admin@desameat.go.id");
-            admin.setPassword(passwordEncoder.encode("admin"));
             admin.setFullName("Administrator Desa Meat");
+
+            // username: admin
+            // password: admin123
+            admin.setPassword(passwordEncoder.encode("admin123"));
+
             admin.setRole(adminRole);
+
             userRepository.save(admin);
-            System.out.println("Default admin user created successfully! (admin/admin)");
+
+            System.out.println("Default admin created!");
+            System.out.println("Username : admin");
+            System.out.println("Password : admin123");
         }
 
-        // Profil Admin
-        User admin = userRepository.findByUsername("admin").orElse(null);
+        // =========================
+        // 3. PROFIL DESA
+        // =========================
+        User adminUser = userRepository.findByUsername("admin").orElse(null);
 
-        if (admin != null && profilRepository.count() == 0) {
+        if (adminUser != null && profilRepository.count() == 0) {
+
             ProfilDesa profil = new ProfilDesa();
-            profil.setUser(admin);
+
+            profil.setUser(adminUser);
+
+            // Jika ada field lain di ProfilDesa
+            // isi di sini
 
             profilRepository.save(profil);
 
-            System.out.println("Profil Desa created and linked to admin!");
+            System.out.println("Profil Desa created!");
         }
 
-        // 3. Seed Default Wisata Destinations if empty
+        // =========================
+        // 4. DATA WISATA
+        // =========================
         if (wisataRepository.count() == 0) {
+
             Wisata pantaiMeat = new Wisata(
-                "Pantai Meat",
-                "Pantai dengan hamparan rumput hijau yang luas dan pasir putih bersih langsung di tepian Danau Toba. Sangat populer untuk tempat berkemah (camping ground), bermain kano, serta menikmati senja.",
-                "Pesisir Danau, Desa Meat",
-                4.9,
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-                "Camping Ground, Sewa Perahu, Kamar Mandi, Spot Foto, Warung Makan"
+                    "Pantai Meat",
+                    "Pantai dengan hamparan rumput hijau yang luas dan pasir putih bersih langsung di tepian Danau Toba.",
+                    "Pesisir Danau, Desa Meat",
+                    4.9,
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                    "Camping Ground, Sewa Perahu, Spot Foto"
             );
 
             Wisata bukitMeat = new Wisata(
-                "Bukit Indah Meat",
-                "Perbukitan hijau yang berdiri megah mengitari desa. Merupakan lokasi terbaik untuk menikmati matahari terbit (sunrise) dan keindahan lanskap Danau Toba yang membentang luas dari ketinggian.",
-                "Bukit Tampahan, Desa Meat",
-                4.8,
-                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
-                "Spot Foto, Area Trekking, Gazebo, Tempat Parkir"
+                    "Bukit Indah Meat",
+                    "Perbukitan hijau dengan pemandangan Danau Toba yang sangat indah.",
+                    "Bukit Tampahan, Desa Meat",
+                    4.8,
+                    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+                    "Spot Foto, Trekking, Gazebo"
             );
 
             Wisata sawahMeat = new Wisata(
-                "Sawah Terasering Tampahan",
-                "Sawah terasering tradisional berundak-undak peninggalan leluhur yang subur. Memberikan nuansa hijau royo-royo pedesaan yang asri dan sejuk berlatarkan pegunungan Toba.",
-                "Sawah Barat, Desa Meat",
-                4.7,
-                "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
-                "Agrowisata, Spot Foto, Jalur Sepeda, Gazebo"
+                    "Sawah Terasering Tampahan",
+                    "Sawah terasering tradisional dengan suasana pedesaan yang asri.",
+                    "Sawah Barat, Desa Meat",
+                    4.7,
+                    "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
+                    "Agrowisata, Jalur Sepeda, Gazebo"
             );
 
             wisataRepository.save(pantaiMeat);
             wisataRepository.save(bukitMeat);
             wisataRepository.save(sawahMeat);
-            System.out.println("Default Wisata destinations seeded successfully!");
+
+            System.out.println("Wisata seeded successfully!");
         }
+
+        System.out.println("Database seeding completed!");
     }
 }

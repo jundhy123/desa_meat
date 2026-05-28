@@ -1,70 +1,121 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Hubungi Kami')"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontak Desa - Desa Meat</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
 
-<body>
-
-    <!-- HEADER: Memanggil dari fragment agar tidak berbeda dengan halaman lain -->
-    <header th:replace="~{fragments/navbar :: navbar}"></header>
-
-    <!-- HERO -->
-    <section class="hero"
-        style="height: 50vh; background:
-        linear-gradient(rgba(12,74,110,0.7), rgba(15,23,42,0.8)),
-        url('/images/lake_toba.jpg') center/cover no-repeat;">
-
-        <div class="hero-content">
-            <div class="hero-tag">Informasi Kontak</div>
-            <h1>Hubungi Desa Meat Balige</h1>
-            <p>Informasi alamat kantor desa, nomor telepon, email, dan layanan masyarakat.</p>
+    <!-- Page Header Hero Banner -->
+    <div class="bg-brand-navy text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <h1 class="text-3xl md:text-4xl font-display font-black">Hubungi Kantor Desa Meat</h1>
+            <p class="text-slate-400 max-w-lg mx-auto text-xs md:text-sm">
+                Hubungi aparatur desa untuk masukan, aspirasi, kerjasama pariwisata eksternal maupun komplain pelayanan umum.
+            </p>
         </div>
-    </section>
+    </div>
 
-    <!-- SECTION KONTAK -->
-    <section class="section">
-        <div class="section-header">
-            <h2 class="section-title">Kontak Desa</h2>
-            <p class="section-subtitle">Hubungi kami untuk informasi layanan, administrasi, dan kegiatan desa.</p>
+    <!-- Kontak layout Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        <!-- Left Side: Kontak Form -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 md:p-8 border border-slate-150/70 shadow-sm space-y-6">
+            <h3 class="font-display font-black text-slate-900 text-base border-b border-slate-100 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-comments text-emerald-505"></i>
+                Kirimkan Pesan Anda
+            </h3>
+
+            <!-- Success Alert trigger -->
+            <div th:if="${success != null}" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 p-4 rounded-xl text-xs flex items-center gap-2.5">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+                <span th:text="${success}">Pesan Anda telah diterima oleh administrator Kantor Desa!</span>
+            </div>
+
+            <!-- Form submission properties form -->
+            <form action="/kontak/send" method="post" class="space-y-4 text-xs text-slate-750">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-550">Nama Lengkap Anda <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" placeholder="Ketik nama lengkap Anda..." class="w-full border border-slate-200 rounded-xl px-4 py-3 bg-[#f8fafc] focus:border-emerald-520 focus:bg-white transition-all" required />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-550">Alamat Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="email" placeholder="Contoh: nama@domain.com" class="w-full border border-slate-200 rounded-xl px-4 py-3 bg-[#f8fafc] focus:border-emerald-520 focus:bg-white transition-all" required />
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="font-bold text-slate-550">Subjek Kategori Pesan <span class="text-red-500">*</span></label>
+                    <select name="subject" class="w-full border border-slate-200 rounded-xl px-4 py-3 bg-[#f8fafc] focus:border-emerald-520 focus:bg-white transition-all" required>
+                        <option value="Aspirasi Warga">Aspirasi & Saran</option>
+                        <option value="Sewa Tempat Pariwisata">Pertanyaan Pariwisata / Ekowisata</option>
+                        <option value="Pengaduan Pelayanan">Aduan Pelayanan Umum</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="font-bold text-slate-550">Isi Pesan Anda <span class="text-red-500">*</span></label>
+                    <textarea name="message" rows="5" placeholder="Tuliskan isi aspirasi atau keluhan Anda secara detail..." class="w-full border border-slate-200 rounded-xl p-4 bg-[#f8fafc] focus:border-emerald-520 focus:bg-white transition-all" required></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-2xl w-full md:w-auto transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Kirim Masukan</span>
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="grid-3">
-            <!-- CARD ALAMAT -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-tag tag-blue">Alamat</div>
-                    <h3 class="card-title">Kantor Desa</h3>
-                    <p class="card-desc">Jl. Desa Meat Balige, Kabupaten Toba, Sumatera Utara.</p>
+        <!-- Right Side: Contact details / Working Hours info -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <div class="bg-white rounded-3xl p-6 border border-slate-150/70 shadow-sm space-y-4">
+                <h3 class="font-display font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
+                    🏢 Informasi Kontak Resmi
+                </h3>
+                <div class="text-xs space-y-4 text-slate-600">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-map-location"></i>
+                        </div>
+                        <div>
+                            <strong class="text-slate-800 uppercase block tracking-wider text-[10px]">Alamat Kantor</strong>
+                            <span class="leading-relaxed text-[11px] block mt-0.5">Jl. Pantai Pasir Putih Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara 22312</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong class="text-slate-800 uppercase block tracking-wider text-[10px]">Email Support</strong>
+                            <span class="leading-relaxed text-[11px] block mt-0.5">kantor@desameatbalige.go.id</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <strong class="text-slate-800 uppercase block tracking-wider text-[10px]">Hotline Sekretariat</strong>
+                            <span class="leading-relaxed text-[11px] block mt-0.5">+62 822-1234-5678 (WhatsApp Aktif)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- CARD TELEPON -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-tag tag-green">Telepon</div>
-                    <h3 class="card-title">Nomor Telepon</h3>
-                    <p class="card-desc">0812-3456-7890</p>
-                </div>
-            </div>
-
-            <!-- CARD EMAIL -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-tag tag-orange">Email</div>
-                    <h3 class="card-title">Email Desa</h3>
-                    <p class="card-desc">desameat@gmail.com</p>
-                </div>
-            </div>
         </div>
-    </section>
 
-    <!-- FOOTER: Memanggil dari fragment agar konsisten -->
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

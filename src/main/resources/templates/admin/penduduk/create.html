@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasikan Warga Baru - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&family=Space+Grotesk:wght=600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-emerald-450"></i>
+                <span>Registrasikan Warga Baru</span>
+            </h1>
+            <a href="/admin/penduduk" class="bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-xs px-4 py-2.5 rounded-xl transition-all border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </header>
+
+        <!-- Main Workspace Body -->
+        <div class="p-8 max-w-4xl">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
+                <div>
+                    <h3 class="font-display font-bold text-base text-white">Formulir Pendaftaran Kependudukan</h3>
+                    <p class="text-xs text-slate-400">Pastikan NIK 16 digit telah diperiksa dan data sesuai dengan kartu identitas resmi.</p>
+                </div>
+
+                <!-- Formulir Spring POST -->
+                <form th:action="@{/admin/penduduk/save}" th:object="${citizen}" method="post" class="space-y-6 text-xs text-slate-300">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">NIK (16 Digit Terdaftar) <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{nik}" maxlength="16" minlength="16" placeholder="Contoh: 121203..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Nama Lengkap Sesuai KTP <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{nama}" placeholder="Ketik nama lengkap..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Tanggal Lahir <span class="text-rose-500">*</span></label>
+                            <input type="date" th:field="*{tanggalLahir}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Jenis Kelamin</label>
+                            <select th:field="*{jenisKelamin}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Pekerjaan Utama Sektor Mata Pencaharian <span class="text-rose-500">*</span></label>
+                            <input type="text" th:field="*{pekerjaan}" placeholder="Contoh: Petani, Wiraswasta..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all" required />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-400">Status Perkawinan</label>
+                            <select th:field="*{statusPerkawinan}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
+                                <option value="Belum Kawin">Belum Kawin</option>
+                                <option value="Kawin">Kawin</option>
+                                <option value="Cerai Hidup">Cerai Hidup</option>
+                                <option value="Cerai Mati">Cerai Mati</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Alamat Tempat Tinggal <span class="text-rose-500">*</span></label>
+                        <textarea th:field="*{alamat}" rows="4" placeholder="Nama Dusun, RT/RW, Meat..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-emerald-500 outline-none transition-all resize-none" required></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+                        <a href="/admin/penduduk" class="bg-slate-800 hover:bg-slate-700 text-slate-350 font-bold px-5 py-3 rounded-xl transition-colors">Batal</a>
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-xl transition-colors shadow-md">Simpan Data Warga</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

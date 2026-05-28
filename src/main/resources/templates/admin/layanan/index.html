@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Verifikasi Layanan Surat - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&family=Space+Grotesk:wght=600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-file-signature text-emerald-450"></i>
+                <span>Verifikasi Pengajuan Surat Keterangan Warga</span>
+            </h1>
+            <div class="bg-indigo-500/10 text-indigo-400 font-bold text-[10px] px-3 py-1.5 rounded-full border border-indigo-500/15">
+                <span>Pelayanan Mandiri Terpadu</span>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <div class="p-8 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="font-display font-bold text-base text-white">Daftar Antrean Permohonan</h3>
+                        <p class="text-xs text-slate-400">Verifikasi dokumen SKU, SKTM, Pengantar Domisili, Surat Kelahiran warga lokal secara paperless.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="py-3.5 px-4 font-bold">Kode Surat</th>
+                                <th class="py-3.5 px-4 font-bold">Pemohon / NIK</th>
+                                <th class="py-3.5 px-4 font-bold">Jenis Klasifikasi</th>
+                                <th class="py-3.5 px-4 font-bold">Kontak HP/WA</th>
+                                <th class="py-3.5 px-4 font-bold">Keterangan / Keperluan</th>
+                                <th class="py-3.5 px-4 font-bold">Tanggal Kirim</th>
+                                <th class="py-3.5 px-4 font-bold">Status Berkas</th>
+                                <th class="py-3.5 px-4 font-bold text-right text-slate-400">Verifikasi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-850">
+                            <tr th:each="r : ${requests}" class="hover:bg-slate-850/40 transition-colors">
+                                <td class="py-3.5 px-4 font-mono text-emerald-450 font-bold" th:text="${r.id}">SRT-2026-001</td>
+                                <td class="py-3.5 px-4 text-white">
+                                    <div class="font-bold" th:text="${r.namaLengkap}">Andres Sitorus</div>
+                                    <div class="text-[10px] text-slate-500 font-mono" th:text="${r.nik}">1212XXXXXXXXX</div>
+                                </td>
+                                <td class="py-3.5 px-4 font-semibold text-slate-300" th:text="${r.jenisSurat}">Surat Keterangan Usaha (SKU)</td>
+                                <td class="py-3.5 px-4 font-mono text-blue-400" th:text="${r.whatsapp}">0812XXXXXXXX</td>
+                                <td class="py-3.5 px-4 text-slate-400 max-w-xs truncate" th:text="${r.keterangan}">Bantuan modal KUR Mandiri</td>
+                                <td class="py-3.5 px-4 text-slate-350 font-mono" th:text="${r.tanggalPengajuan}">2026-05-28</td>
+                                <td class="py-3.5 px-4">
+                                    <!-- Status color badges -->
+                                    <span th:if="${r.status.name() == 'PENDING'}" class="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold">PENDING</span>
+                                    <span th:if="${r.status.name() == 'DIPROSES'}" class="bg-blue-500/10 text-blue-450 border border-blue-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold">DIPROSES</span>
+                                    <span th:if="${r.status.name() == 'SELESAI'}" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold">SELESAI</span>
+                                    <span th:if="${r.status.name() == 'DITOLAK'}" class="bg-rose-500/10 text-rose-450 border border-rose-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold">DITOLAK</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-right">
+                                    <a th:href="@{/admin/layanan/edit/{id}(id=${r.id})}"
+                                       class="bg-emerald-500/10 hover:bg-emerald-500 text-emerald-450 hover:text-white py-1.5 px-3.5 rounded-xl border border-emerald-500/20 font-black text-[11px] transition-all inline-block">
+                                        <i class="fa-solid fa-list-check mr-1.5"></i>Proses Berkas
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${requests == null || requests.empty}" class="p-12 text-center text-slate-500 space-y-3">
+                        <i class="fa-solid fa-envelope-open text-3xl"></i>
+                        <p class="text-xs">Antrean permohonan surat kosong saat ini. Luar biasa, semua berkas terlayani!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,44 +1,44 @@
 package com.desameat.website.controller;
 
+import com.desameat.website.service.BeritaService;
+import com.desameat.website.service.WisataService;
+import com.desameat.website.service.UmkmService;
+import com.desameat.website.service.PendudukService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
 
-    @GetMapping({"/", "/home"})
-    public String home() {
+    @Autowired
+    private BeritaService beritaService;
+
+    @Autowired
+    private WisataService wisataService;
+
+    @Autowired
+    private UmkmService umkmService;
+
+    @Autowired
+    private PendudukService pendudukService;
+
+    @GetMapping({"", "/", "/home"})
+    public String viewHome(Model model) {
+        model.addAttribute("recentBerita", beritaService.getRecentBerita());
+        model.addAttribute("destinations", wisataService.getAllWisata());
+        
+        // Dynamic counts for homepage dashboard
+        model.addAttribute("totalPenduduk", pendudukService.getAllPenduduk().size());
+        model.addAttribute("totalWisata", wisataService.getAllWisata().size());
+        model.addAttribute("totalUmkm", umkmService.getAllUmkm().size());
         
         return "user/home";
     }
 
-    @GetMapping("/profil2")
-    public String profil() {
-        return "user/profil";
-    }
-
-    @GetMapping("/berita")
-    public String berita() {
-        return "user/berita";
-    }
-
-<
-    @GetMapping("/kontak")
-    public String kontak() {
-        return "user/kontak";
+    @GetMapping("/profil")
+    public String viewProfilePage() {
+        return "redirect:/profil-desa";
     }
 }
-=======
-    @GetMapping("/galeri")
-    public String galeri() {
-        return "user/galeri";
-    }
-
-    @GetMapping("/umkm")
-    public String umkm() {
-        return "user/umkm";
-    }
-
-
-}
-

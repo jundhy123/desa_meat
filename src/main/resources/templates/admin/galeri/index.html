@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Galeri - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-images text-emerald-400"></i>
+                <span>Manajemen Galeri Foto Desa</span>
+            </h1>
+            <a href="/admin/galeri/create" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-1.5">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Tambah Foto Baru</span>
+            </a>
+        </header>
+
+        <div class="p-8 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="py-3.5 px-4 font-bold">Pratinjau</th>
+                                <th class="py-3.5 px-4 font-bold">Judul</th>
+                                <th class="py-3.5 px-4 font-bold">Kategori</th>
+                                <th class="py-3.5 px-4 font-bold">Tanggal</th>
+                                <th class="py-3.5 px-4 font-bold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-850">
+                            <tr th:each="p : ${photos}" class="hover:bg-slate-850/40 transition-colors">
+                                <td class="py-3 px-4">
+                                    <img th:src="${p.urlGambar}" class="w-16 h-12 object-cover rounded-lg border border-slate-800" />
+                                </td>
+                                <td class="py-3 px-4 font-semibold text-white" th:text="${p.judul}">Judul Foto</td>
+                                <td class="py-3 px-4">
+                                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold" th:text="${p.kategori}">UMUM</span>
+                                </td>
+                                <td class="py-3 px-4 text-slate-400" th:text="${p.tanggal}">2026-05-28</td>
+                                <td class="py-3 px-4 text-right">
+                                    <a th:href="@{/admin/galeri/delete/{id}(id=${p.id})}" onclick="return confirm('Hapus foto ini?')" class="text-red-400 hover:text-red-300 font-bold">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${photos == null || photos.empty}" class="p-12 text-center text-slate-500">
+                        <p>Belum ada foto di galeri.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Foto Galeri - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm text-white flex items-center gap-2">
+                <i class="fa-solid fa-plus text-emerald-400"></i>
+                <span>Tambah Foto Galeri Baru</span>
+            </h1>
+            <a href="/admin/galeri" class="bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-xs px-4 py-2.5 rounded-xl border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </header>
+
+        <div class="p-8 max-w-4xl">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6">
+                <form th:action="@{/admin/galeri/save}" th:object="${photo}" method="post" enctype="multipart/form-data" class="space-y-6 text-xs text-slate-300">
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Judul Foto <span class="text-rose-500">*</span></label>
+                        <input type="text" th:field="*{judul}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Kategori</label>
+                        <select th:field="*{kategori}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none">
+                            <option value="Kegiatan">Kegiatan</option>
+                            <option value="Alam & Wisata">Alam & Wisata</option>
+                            <option value="Budaya">Budaya</option>
+                            <option value="Infrastruktur">Infrastruktur</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">File Gambar <span class="text-rose-500">*</span></label>
+                        <input type="file" name="imageFile" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Deskripsi Singkat</label>
+                        <textarea th:field="*{deskripsi}" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-emerald-500 outline-none resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-xl shadow-md">Simpan Foto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

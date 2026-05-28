@@ -1,101 +1,105 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${destination.nama + ' - Wisata Desa Meat'}">Detail Wisata - Desa Meat</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<head th:replace="fragments/head :: head(${destination.nama})"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
-                Desa<span>Meat</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Beranda</a></li>
-                <li><a href="/profil" class="nav-link">Profil</a></li>
-                <li><a href="/wisata" class="nav-link active">Wisata</a></li>
-                <li><a href="/umkm" class="nav-link">UMKM</a></li>
-                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
-                <li><a href="/galeri" class="nav-link">Galeri</a></li>
-                <li><a href="/kontak" class="nav-link">Kontak</a></li>
-                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
-            </ul>
-        </div>
-    </header>
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
 
-    <!-- Destination Image Banner -->
-    <section class="detail-banner" th:style="'background-image: linear-gradient(rgba(12, 74, 110, 0.2), rgba(12, 74, 110, 0.9)), url(' + ${destination.gambar != null ? destination.gambar : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'} + ')'">
-        <div class="detail-banner-overlay">
-            <span class="badge badge-success" style="background-color: var(--lake-light); color: var(--lake-deep); margin-bottom: 0.5rem;"><i class="fa-solid fa-star" style="color: #eab308;"></i> <span th:text="${destination.rating}">4.8</span> Rating</span>
-            <h1 style="font-size: 3rem; color: #fff;" th:text="${destination.nama}">Nama Objek Wisata</h1>
-            <p style="font-size: 1.1rem; color: rgba(255,255,255,0.8);"><i class="fa-solid fa-location-dot"></i> <span th:text="${destination.lokasi}">Lokasi Destinasi</span></p>
-        </div>
-    </section>
-
-    <!-- Detail Contents -->
-    <div class="detail-container">
-        <a href="/wisata" class="btn btn-secondary" style="margin-bottom: 2rem; color: var(--lake-deep); border-color: var(--border-color); background-color: #fff;"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Wisata</a>
+    <!-- Main Detail container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
-        <div class="detail-card">
-            <div class="detail-section">
-                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-file-lines" style="color: var(--lake-primary);"></i> Deskripsi Wisata</h3>
-                <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;" th:text="${destination.deskripsi}">Ini adalah deskripsi lengkap mengenai keindahan destinasi wisata ini...</p>
-            </div>
+        <!-- Breadcrumbs -->
+        <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-6">
+            <a href="/home" class="hover:text-emerald-600">Beranda</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <a href="/wisata" class="hover:text-emerald-600">Destinasi Wisata</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <span class="truncate text-slate-600" th:text="${destination.nama}">Detail Tujuan Wisata</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <div class="detail-section">
-                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-toolbox" style="color: var(--field-green);"></i> Fasilitas Tersedia</h3>
-                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem;">
-                    <span th:each="facility : ${#strings.arraySplit(destination.fasilitas, ',')}" class="badge" style="font-size: 0.9rem; padding: 0.5rem 1.25rem; background-color: var(--field-light); color: var(--field-green); font-weight: 500;" th:text="${facility}">Fasilitas</span>
+            <!-- Left Side: Attraction Info & Photo gallery -->
+            <div class="lg:col-span-8 bg-white rounded-3xl p-6 md:p-8 border border-slate-150/70 shadow-sm space-y-6">
+                <!-- Head description -->
+                <div class="flex justify-between items-start gap-4 flex-wrap pb-4 border-b border-slate-100">
+                    <div class="space-y-1">
+                        <span class="text-xs font-bold text-slate-400 font-mono tracking-widest uppercase" th:text="${destination.lokasi}">Kecamatan Tampahan</span>
+                        <h1 class="text-2xl md:text-3xl font-display font-black text-slate-900" th:text="${destination.nama}">Pantai Pasir Putih Meat</h1>
+                    </div>
+                    <div class="bg-amber-100/75 px-3 py-1.5 rounded-2xl flex items-center gap-1.5 shrink-0 text-amber-800 text-xs font-bold">
+                        <i class="fa-solid fa-star"></i>
+                        <span th:text="${destination.rating}">4.9</span>
+                        <span class="text-slate-400 font-normal">/ 5.0</span>
+                    </div>
+                </div>
+
+                <!-- Featured spot image -->
+                <div class="h-64 md:h-[420px] rounded-2xl overflow-hidden bg-slate-105">
+                    <img th:src="${destination.gambar != null ? destination.gambar : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1500&q=80'}" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Description content text -->
+                <div class="space-y-4">
+                    <h3 class="font-display font-bold text-sm text-slate-900">Deskripsi Wisata</h3>
+                    <p class="text-sm md:text-base text-slate-600 leading-relaxed whitespace-pre-line" th:text="${destination.deskripsi}">
+                        Tempat wisata legendaris yang memanjakan wisatawan asing maupun domestik.
+                    </p>
+                </div>
+
+                <!-- Facilities Checklist -->
+                <div th:if="${destination.fasilitas != null}" class="space-y-4 pt-4 border-t border-slate-100">
+                    <h3 class="font-display font-medium text-sm text-slate-900">Fasilitas & Layanan Tersedia</h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs md:text-sm text-slate-600">
+                        <!-- We split comma-delimited facilities or display text -->
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                            <span th:text="${destination.fasilitas}">Fasilitas Dasar Mandiri</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="detail-section" style="border-bottom: none;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-map" style="color: var(--batak-orange);"></i> Informasi Tambahan</h3>
-                <p style="color: var(--text-muted);">Untuk informasi lebih lanjut mengenai pemesanan tempat camping atau sewa homestay, silakan hubungi kontak informasi Desa Meat pada jam operasional kantor kepala desa.</p>
+            <!-- Right Side: Booking info / Navigation directions -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Map card simulated -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-150/70 shadow-sm space-y-4">
+                    <h3 class="font-display font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
+                        🗺️ Panduan Rute & Lokasi
+                    </h3>
+                    <div class="h-44 rounded-2xl bg-amber-500/10 border border-amber-500/15 overflow-hidden flex flex-col items-center justify-center text-center p-4">
+                        <i class="fa-solid fa-map-marked-alt text-4xl text-amber-600 mb-2"></i>
+                        <span class="text-xs font-bold text-[#b45309]">Peta Terintegrasi</span>
+                        <p class="text-[10px] text-amber-800/80 mt-1">Gunakan perangkat GPS Anda untuk menuju lokasi di Tampahan.</p>
+                    </div>
+                    <div class="text-xs space-y-1.5">
+                        <p class="flex justify-between text-slate-500"><span>Provinsi:</span> <strong class="text-slate-800">Sumatera Utara</strong></p>
+                        <p class="flex justify-between text-slate-500"><span>Kabupaten:</span> <strong class="text-slate-800">Toba</strong></p>
+                        <p class="flex justify-between text-slate-500"><span>Kecamatan:</span> <strong class="text-slate-800">Tampahan</strong></p>
+                    </div>
+                </div>
+
+                <!-- Tips & guides -->
+                <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 p-6 rounded-3xl space-y-3">
+                    <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Tips Berkunjung
+                    </h4>
+                    <p class="text-[11px] leading-relaxed text-emerald-900/80">
+                        1. Hormati peraturan adat warga setempat.<br/>
+                        2. Jaga kebersihan dengan membuang sampah pada tempatnya.<br/>
+                        3. Sebaiknya menggunakan kendaraan motor/mobil yang fit untuk melintasi jalan berliku.
+                    </p>
+                </div>
             </div>
+
         </div>
+
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-about">
-                <h3>Desa Meat</h3>
-                <p style="margin-bottom: 1.5rem;">Kantor Kepala Desa Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara, Indonesia.</p>
-                <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
-                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <h4>Navigasi</h4>
-                <ul>
-                    <li><a href="/">Beranda</a></li>
-                    <li><a href="/profil">Profil Desa</a></li>
-                    <li><a href="/wisata">Pariwisata</a></li>
-                    <li><a href="/layanan">Layanan Administratif</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h4>Kontak Informasi</h4>
-                <ul style="color: rgba(255,255,255,0.6);">
-                    <li><i class="fa-solid fa-phone"></i> +62 821-6543-9876</li>
-                    <li><i class="fa-solid fa-envelope"></i> info@desameat.go.id</li>
-                    <li><i class="fa-solid fa-clock"></i> Senin - Jumat: 08.00 - 16.00</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
-        </div>
-    </footer>
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

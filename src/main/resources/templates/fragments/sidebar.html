@@ -1,32 +1,67 @@
-<nav id="sidebar" th:fragment="sidebar">
-    <div class="brand">
-        <i class="fas fa-leaf me-2 text-success"></i>Desa Meat
+<div th:fragment="sidebar" class="w-64 bg-slate-900 min-h-screen text-slate-350 shrink-0 border-r border-slate-800 flex flex-col">
+    <!-- Brand / Header -->
+    <div class="h-16 px-6 bg-slate-950 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-display font-black text-sm tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>ADMIN MEAT</span>
+            </span>
+        </div>
+        <div class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">LIVE</div>
     </div>
-    <ul class="nav flex-column mt-2">
-        <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
-                <i class="fas fa-tachometer-alt"></i>Dashboard
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'berita'} ? 'active'" th:href="@{/admin/berita}">
-                <i class="fas fa-newspaper"></i>Berita
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'pengumuman'} ? 'active'" th:href="@{/admin/pengumuman}">
-                <i class="fas fa-bullhorn"></i>Pengumuman
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'penduduk'} ? 'active'" th:href="@{/admin/penduduk}">
-                <i class="fas fa-users"></i>Penduduk
-            </a>
-        </li>
-        <li class="nav-item mt-3">
-            <a class="nav-link" th:href="@{/auth/logout}">
-                <i class="fas fa-sign-out-alt"></i>Logout
-            </a>
-        </li>
-    </ul>
-</nav>
+
+    <!-- Logged in Admin Summary -->
+    <div class="p-6 bg-slate-950/40 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/60 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-user-circle text-lg"></i>
+        </div>
+        <div class="overflow-hidden">
+            <h5 class="text-xs font-bold text-white truncate">Administrator</h5>
+            <span class="text-[10px] text-slate-500 block truncate">Kec. Tampahan, Balige</span>
+        </div>
+    </div>
+
+    <!-- Navigation links -->
+    <div class="p-4 flex-1 space-y-1 overflow-y-auto">
+        <a href="/admin/dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-chart-line w-4 text-slate-450"></i>
+            <span>Dashboard Desk</span>
+        </a>
+        <a href="/admin/berita" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-newspaper w-4 text-slate-450"></i>
+            <span>Kabar Berita</span>
+        </a>
+        <a href="/admin/wisata" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-umbrella-beach w-4 text-slate-450"></i>
+            <span>Destinasi Wisata</span>
+        </a>
+        <a href="/admin/galeri" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-images w-4 text-slate-450"></i>
+            <span>Galeri Foto</span>
+        </a>
+        <a href="/admin/umkm" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-store w-4 text-slate-450"></i>
+            <span>Produk UMKM</span>
+        </a>
+        <a href="/admin/penduduk" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-people-group w-4 text-slate-450"></i>
+            <span>Data Penduduk</span>
+        </a>
+        <a href="/admin/organisasi" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-sitemap w-4 text-slate-450"></i>
+            <span>Struktur Lembaga</span>
+        </a>
+        <a href="/admin/layanan" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-850 hover:text-white transition-all">
+            <i class="fa-solid fa-file-signature w-4 text-slate-450"></i>
+            <span>Layanan Surat</span>
+        </a>
+    </div>
+
+    <!-- Log out action -->
+    <div class="p-4 border-t border-slate-850">
+        <a href="/auth/logout" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-950/20 text-red-405 border border-red-900/10 hover:bg-red-900/20 hover:text-red-300 transition-all">
+            <i class="fa-solid fa-sign-out"></i>
+            <span>Log out</span>
+        </a>
+    </div>
+</div>

@@ -1,465 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMKM Desa – Portal Toba</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --font-primary: 'Inter', sans-serif;
-            --font-heading: 'Outfit', sans-serif;
-            --lake-deep: #0c4a6e;
-            --lake-primary: #0284c7;
-            --lake-light: #e0f2fe;
-            --lake-teal: #0d9488;
-            --field-green: #166534;
-            --field-light: #dcfce7;
-            --batak-orange: #c2410c;
-            --batak-red: #991b1b;
-            --bg-main: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --border-color: #e2e8f0;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-        }
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Produk UMKM')"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-primary); background: var(--bg-main); color: var(--text-main); line-height: 1.6; }
-        h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading); font-weight: 700; color: var(--lake-deep); }
-        a { color: inherit; text-decoration: none; transition: var(--transition); }
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
 
-        /* === HEADER === */
-        header {
-            background: rgba(255,255,255,0.88);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; z-index: 100;
-        }
-        .nav-container {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 2rem;
-        }
-        .logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--lake-deep); }
-        .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--lake-deep), var(--lake-primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
-        .logo span { color: var(--lake-primary); }
-        .nav-menu { display: flex; list-style: none; gap: 1.75rem; align-items: center; }
-        .nav-link { font-weight: 500; color: var(--text-muted); font-size: 0.95rem; padding: 0.4rem 0; position: relative; }
-        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--lake-primary); transition: var(--transition); }
-        .nav-link:hover, .nav-link.active { color: var(--lake-deep); }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .btn-login { background: linear-gradient(135deg, var(--lake-deep), var(--lake-primary)); color: #fff !important; padding: 0.45rem 1.2rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem; }
-
-        /* === HERO === */
-        .page-hero {
-            position: relative;
-            background: linear-gradient(rgba(12,74,110,0.72), rgba(15,23,42,0.88)),
-                        url('../images/lake_toba.jpg') center/cover no-repeat;
-            padding: 4rem 2rem 5.5rem;
-            text-align: center;
-            overflow: hidden;
-        }
-        .page-hero::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 0; right: 0;
-            height: 60px;
-            background: var(--bg-main);
-            clip-path: ellipse(55% 100% at 50% 100%);
-        }
-        .hero-tag {
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.25);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.85);
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        .page-hero h1 { color: #fff; font-size: 2.75rem; line-height: 1.15; margin-bottom: 0.75rem; text-shadow: 0 2px 12px rgba(0,0,0,0.25); }
-        .page-hero p { color: rgba(255,255,255,0.75); font-size: 1.05rem; max-width: 520px; margin: 0 auto; }
-        .hero-content { position: relative; animation: fadeInUp 0.8s ease-out; }
-
-        /* === SEARCH BAR === */
-        .search-wrap {
-            max-width: 520px;
-            margin: 2rem auto 0;
-            position: relative;
-        }
-        .search-wrap input {
-            width: 100%;
-            padding: 0.85rem 1rem 0.85rem 3rem;
-            border-radius: 50px;
-            border: none;
-            font-family: var(--font-primary);
-            font-size: 0.95rem;
-            box-shadow: var(--shadow-lg);
-            outline: none;
-            background: #fff;
-            color: var(--text-main);
-        }
-        .search-icon {
-            position: absolute;
-            left: 1.1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* === STATS BAR === */
-        .stats-bar {
-            max-width: 800px;
-            margin: -2rem auto 0;
-            position: relative;
-            z-index: 10;
-            background: #fff;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-        .stat-item { padding: 1.5rem; text-align: center; border-right: 1px solid var(--border-color); }
-        .stat-item:last-child { border-right: none; }
-        .stat-number { font-size: 2rem; font-family: var(--font-heading); font-weight: 800; color: var(--lake-primary); }
-        .stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.2rem; }
-
-        /* === MAIN WRAPPER === */
-        .main-wrap {
-            max-width: 1200px;
-            margin: 3rem auto 5rem;
-            padding: 0 2rem;
-        }
-
-        /* === FILTER BAR === */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .filter-bar h2 { font-size: 1.35rem; }
-        .filter-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .pill {
-            padding: 0.35rem 1rem;
-            border-radius: 50px;
-            font-size: 0.82rem;
-            font-weight: 500;
-            border: 1.5px solid var(--border-color);
-            background: #fff;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-muted);
-        }
-        .pill.active, .pill:hover { border-color: var(--lake-primary); color: var(--lake-primary); background: var(--lake-light); }
-
-        /* === UMKM GRID === */
-        .umkm-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-
-        .umkm-card {
-            background: #fff;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            transition: var(--transition);
-            animation: fadeInUp 0.5s ease-out both;
-            display: flex;
-            flex-direction: column;
-        }
-        .umkm-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(2,132,199,0.3);
-        }
-
-        .card-top {
-            padding: 1.5rem 1.5rem 0;
-        }
-        .card-icon-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        .card-icon {
-            width: 50px; height: 50px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--lake-light), #f0fdf4);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem;
-            border: 1px solid rgba(2,132,199,0.15);
-        }
-        .card-badge {
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 0.25rem 0.7rem;
-            border-radius: 50px;
-            background: var(--field-light);
-            color: var(--field-green);
-            border: 1px solid rgba(22,101,52,0.15);
-        }
-        .card-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--lake-deep);
-            margin-bottom: 0.3rem;
-            font-family: var(--font-heading);
-        }
-        .card-owner {
-            font-size: 0.82rem;
-            color: var(--lake-primary);
-            font-weight: 500;
-            margin-bottom: 0.85rem;
-            display: flex; align-items: center; gap: 0.3rem;
-        }
-        .card-desc {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            line-height: 1.55;
-            padding: 0 1.5rem 1.25rem;
-            flex: 1;
-        }
-        .card-footer {
-            border-top: 1px solid var(--border-color);
-            padding: 0.9rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fafafa;
-        }
-        .card-address {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-        .btn-detail {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--lake-primary);
-            display: flex; align-items: center; gap: 0.25rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: var(--radius-sm);
-            background: var(--lake-light);
-            transition: var(--transition);
-        }
-        .btn-detail:hover { background: var(--lake-primary); color: #fff; }
-
-        /* === EMPTY STATE === */
-        .empty-state {
-            text-align: center;
-            padding: 5rem 2rem;
-            background: #fff;
-            border-radius: var(--radius-lg);
-            border: 1.5px dashed var(--border-color);
-        }
-        .empty-icon { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.35; }
-        .empty-state h3 { color: var(--text-muted); font-weight: 500; font-size: 1rem; }
-        .empty-state p { color: #94a3b8; font-size: 0.85rem; margin-top: 0.4rem; }
-
-        /* === FOOTER === */
-        footer {
-            background: var(--lake-deep);
-            color: rgba(255,255,255,0.6);
-            padding: 3rem 2rem;
-            border-top: 4px solid var(--batak-orange);
-        }
-        .footer-inner {
-            max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem;
-        }
-        .footer-brand h3 { color: #fff; margin-bottom: 0.75rem; font-size: 1.3rem; }
-        .footer-brand p { font-size: 0.875rem; line-height: 1.7; }
-        .footer-col h4 { color: #fff; margin-bottom: 1rem; font-size: 0.95rem; }
-        .footer-col ul { list-style: none; }
-        .footer-col li { margin-bottom: 0.5rem; font-size: 0.875rem; }
-        .footer-col a:hover { color: #fff; }
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 2.5rem;
-            padding-top: 1.5rem;
-            text-align: center;
-            max-width: 1200px;
-            margin-left: auto; margin-right: auto;
-            font-size: 0.85rem;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 992px) { .umkm-grid { grid-template-columns: repeat(2,1fr); } .footer-inner { grid-template-columns: 1fr; gap: 2rem; } }
-        @media (max-width: 600px) { .umkm-grid { grid-template-columns: 1fr; } .page-hero h1 { font-size: 1.9rem; } .nav-menu { display: none; } .stats-bar { grid-template-columns: 1fr; } .stat-item { border-right: none; border-bottom: 1px solid var(--border-color); } .stat-item:last-child { border-bottom: none; } }
-    </style>
-</head>
-<body>
-
-<!-- HEADER -->
-<header>
-    <div class="nav-container">
-        <div class="logo">
-            <div class="logo-icon">🌊</div>
-            Portal<span>Toba</span>
-        </div>
-        <ul class="nav-menu">
-            <li><a href="/" class="nav-link">Beranda</a></li>
-            <li><a href="/layanan" class="nav-link">Layanan</a></li>
-            <li><a href="/umkm" class="nav-link active">UMKM</a></li>
-            <li><a href="/berita" class="nav-link">Berita</a></li>
-            <li><a href="/kontak" class="nav-link">Kontak</a></li>
-            <li><a href="/login" class="nav-link btn-login">Masuk</a></li>
-        </ul>
-    </div>
-</header>
-
-<!-- HERO -->
-<div class="page-hero">
-    <div class="hero-content">
-        <span class="hero-tag">🏪 Potensi Ekonomi Lokal</span>
-        <h1>Direktori UMKM Desa</h1>
-        <p>Temukan produk dan jasa unggulan dari para pelaku usaha di desa kami</p>
-        <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Cari nama usaha atau produk..." id="searchInput" oninput="filterCards()">
-        </div>
-    </div>
-</div>
-
-<!-- STATS BAR -->
-<div class="stats-bar">
-    <div class="stat-item">
-        <div class="stat-number" th:text="${listUMKM != null ? listUMKM.size() : 0}">24</div>
-        <div class="stat-label">UMKM Terdaftar</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">3</div>
-        <div class="stat-label">Kategori Usaha</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">100%</div>
-        <div class="stat-label">Produk Lokal</div>
-    </div>
-</div>
-
-<!-- MAIN -->
-<div class="main-wrap">
-
-    <div class="filter-bar">
-        <h2>Semua Usaha</h2>
-        <div class="filter-pills">
-            <span class="pill active">Semua</span>
-            <span class="pill">Kuliner</span>
-            <span class="pill">Kerajinan</span>
-            <span class="pill">Pertanian</span>
-            <span class="pill">Jasa</span>
+    <!-- Page Header Hero Banner -->
+    <div class="bg-brand-navy text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <span class="text-xs font-bold text-emerald-400 block tracking-widest uppercase">Katalog Ekonomi Kreatif</span>
+            <h1 class="text-3xl md:text-4xl font-display font-black">UMKM & Produk Unggulan</h1>
+            <p class="text-slate-400 max-w-lg mx-auto text-xs md:text-sm">
+                Lihat produk tenun Ulos ragi hotang bermutu tinggi, kopi asli Tampahan, serta aneka camilan tradisional.
+            </p>
+            
+            <!-- Category Filter Tabs -->
+            <div class="flex justify-center gap-2 flex-wrap pt-2">
+                <a href="/umkm?kategori=Semua" th:class="${currentKat == 'Semua' ? 'bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl transition-all border border-slate-705'}">Semua</a>
+                <a href="/umkm?kategori=Tenun" th:class="${currentKat == 'Tenun' ? 'bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl transition-all border border-slate-705'}">Tenun Ulos</a>
+                <a href="/umkm?kategori=Kuliner" th:class="${currentKat == 'Kuliner' ? 'bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl transition-all border border-slate-705'}">Kuliner</a>
+                <a href="/umkm?kategori=Souvenir" th:class="${currentKat == 'Souvenir' ? 'bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl transition-all border border-slate-705'}">Souvenir</a>
+            </div>
         </div>
     </div>
 
-    <!-- Grid Cards -->
-    <div class="umkm-grid" id="umkmGrid" th:if="${listUMKM != null and !listUMKM.isEmpty()}">
-        <div class="umkm-card"
-             th:each="u, iterStat : ${listUMKM}"
-             th:style="'animation-delay:' + ${iterStat.index * 70} + 'ms'">
-
-            <div class="card-top">
-                <div class="card-icon-row">
-                    <div class="card-icon">🏪</div>
-                    <span class="card-badge">Aktif</span>
+    <!-- Product Grid list -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div th:each="p : ${products}" class="bg-white rounded-3xl overflow-hidden border border-slate-150/80 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group">
+                <div class="h-44 overflow-hidden bg-slate-100 relative">
+                    <img th:src="${p.gambar != null ? p.gambar : 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=350&q=80'}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-350" />
+                    <span class="absolute top-3 left-3 bg-slate-800/90 text-white px-2 py-0.5 rounded text-[10px] font-bold" th:text="${p.kategori}">Tenun</span>
                 </div>
-                <div class="card-name" th:text="${u.namaUsaha}">Nama Usaha</div>
-                <div class="card-owner">👤 <span th:text="${u.pemilik}">Pemilik</span></div>
+                
+                <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors" th:text="${p.namaProduk}">Ulos Hand-made Balige</h3>
+                        <div class="text-xs text-orange-650 font-bold" th:text="'IDR: ' + ${#numbers.formatDecimal(p.harga, 0, 'POINT', 0, 'COMMA')}">IDR 250,000</div>
+                        <p class="text-xs text-slate-500 line-clamp-2" th:text="${p.deskripsi}">Produk berkualitas unggul asli tenunan tangan kelompok perempuan setempat.</p>
+                        <span class="text-[10px] text-slate-400 block pt-1"><i class="fa-solid fa-user-circle mr-1"></i> Penjual: <span th:text="${p.pembuat}">Ibu Siregar</span></span>
+                    </div>
+                    
+                    <a th:href="@{/umkm/{id}(id=${p.id})}" class="bg-emerald-5 hover:bg-emerald-100 text-center text-emerald-800 py-2 rounded-xl text-xs font-bold transition-all border border-emerald-150 block">
+                        Detail & Hubungi Penjual
+                    </a>
+                </div>
             </div>
-            <p class="card-desc" th:text="${u.deskripsi}">Deskripsi usaha ini akan tampil di sini.</p>
-
-            <div class="card-footer">
-                <div class="card-address">📍 <span th:text="${u.alamat}">Alamat</span></div>
-                <a th:href="@{/umkm/{id}(id=${u.id})}" class="btn-detail">Detail →</a>
-            </div>
-
         </div>
+
     </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" th:if="${listUMKM == null or listUMKM.isEmpty()}">
-        <div class="empty-icon">🏪</div>
-        <h3>Belum ada UMKM yang terdaftar</h3>
-        <p>Silakan hubungi kantor desa untuk mendaftarkan usaha Anda</p>
-    </div>
-
-</div>
-
-<!-- FOOTER -->
-<footer>
-    <div class="footer-inner">
-        <div class="footer-brand">
-            <h3>🌊 Portal Toba</h3>
-            <p>Sistem Informasi Desa yang menghubungkan masyarakat dengan layanan pemerintahan dan potensi ekonomi lokal.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Tautan Cepat</h4>
-            <ul>
-                <li><a href="/layanan">Layanan Desa</a></li>
-                <li><a href="/umkm">UMKM Desa</a></li>
-                <li><a href="/berita">Berita Desa</a></li>
-                <li><a href="/kontak">Kontak</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Informasi</h4>
-            <ul>
-                <li><a href="#">Profil Desa</a></li>
-                <li><a href="#">Visi & Misi</a></li>
-                <li><a href="#">Perangkat Desa</a></li>
-                <li><a href="#">Kebijakan Privasi</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        &copy; 2025 <strong>Portal Desa Toba</strong> — Sistem Informasi Desa. Hak cipta dilindungi.
-    </div>
-</footer>
-
-<script>
-    function filterCards() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
-        const cards = document.querySelectorAll('.umkm-card');
-        cards.forEach(card => {
-            const text = card.innerText.toLowerCase();
-            card.style.display = text.includes(q) ? '' : 'none';
-        });
-    }
-
-    document.querySelectorAll('.pill').forEach(pill => {
-        pill.addEventListener('click', function() {
-            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-</script>
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

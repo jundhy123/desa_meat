@@ -12,25 +12,78 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-        @Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
+            // =========================
+            // CSRF (DEV ONLY)
+            // =========================
             .csrf(csrf -> csrf.disable())
+
+            // =========================
+            // AUTHORIZE REQUEST
+            // =========================
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/penduduk", "/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
+
+                // STATIC RESOURCES
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/favicon.ico", "/webjars/**").permitAll()
+
+                // AUTHENTICATION PATHS
+                .requestMatchers("/auth/**").permitAll()
+
+                // ADMIN AREA & CRUD OPERATIONS (MUST BE BEFORE PUBLIC PAGES TO OVERRIDE)
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/*/admin/**").hasRole("ADMIN")
+                .requestMatchers("/profil-desa/admin/**").hasRole("ADMIN")
+
+                // PUBLIC PAGES (READ-ONLY / FORM SUBMISSION)
+                .requestMatchers(
+                        "/",
+                        "/home",
+                        "/profil-desa/**",
+                        "/berita/**",
+                        "/wisata/**",
+                        "/umkm/**",
+                        "/layanan/**",
+                        "/organisasi/**",
+                        "/admin/organisasi/**", // Allow public access to organization management as requested
+                        "/kontak/**",
+                        "/galeri/**"
+                ).permitAll()
+
+                // DEFAULT RULE
                 .anyRequest().authenticated()
             )
+
+            // =========================
+            // LOGIN CONFIG
+            // =========================
             .formLogin(form -> form
-                .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login") 
-                .defaultSuccessUrl("/admin/dashboard", true)
-                .permitAll()
+                    .loginPage("/auth/login")
+                    .loginProcessingUrl("/auth/login-process")
+                    .defaultSuccessUrl("/admin/dashboard", true)
+                    .failureUrl("/auth/login?error=true")
+                    .permitAll()
             )
-            .logout(logout -> logout.logoutUrl("/auth/logout").logoutSuccessUrl("/"));
+
+            // =========================
+            // LOGOUT CONFIG (FIXED)
+            // =========================
+            .logout(logout -> logout
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessUrl("/berita")
+                    .invalidateHttpSession(true)      // 🔥 FIX SESSION
+                    .clearAuthentication(true)        // 🔥 FIX AUTH CACHE
+                    .deleteCookies("JSESSIONID")      // 🔥 FIX COOKIE STUCK
+            );
+
         return http.build();
     }
 
+    // =========================
+    // PASSWORD ENCODER
+    // =========================
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

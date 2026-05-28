@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proses Pengajuan Surat - Admin Desa Meat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&family=Space+Grotesk:wght=600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 flex min-h-screen">
+
+    <!-- Sidebar Integration -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Main Workspace Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- Header -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm px-8 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-450"></i>
+                <span>Verifikasi &amp; Tanda Tangan Berkas Pemohon</span>
+            </h1>
+            <a href="/admin/layanan" class="bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-xs px-4 py-2.5 rounded-xl transition-all border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </header>
+
+        <!-- Main Workspace Body -->
+        <div class="p-8 max-w-4xl space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
+                <div>
+                    <h3 class="font-display font-bold text-base text-white">Pratinjau Berkas &amp; Dokumen</h3>
+                    <p class="text-xs text-slate-400">Pastikan integritas data dengan NIK pemohon di database sebelum mengambil keputusan penandatanganan.</p>
+                </div>
+
+                <!-- Detail Profile Box -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 space-y-4 text-xs">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">ID Pengajuan Surat</span>
+                            <span class="text-emerald-400 font-mono font-bold text-sm" th:text="${request.id}">SRT-2026-XYZ</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Jenis Klasifikasi Surat</span>
+                            <span class="text-white font-bold" th:text="${request.jenisSurat}">Surat Keterangan Usaha (SKU)</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Nama Lengkap Pemohon</span>
+                            <span class="text-white font-semibold" th:text="${request.namaLengkap}">Andres Sitorus</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">NIK Pemohon</span>
+                            <span class="text-slate-300 font-mono" th:text="${request.nik}">1212XXXXXXXXXXXX</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Alamat Email</span>
+                            <span class="text-slate-300 font-mono" th:text="${request.email}">pemohon@gmail.com</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">WhatsApp Hubung</span>
+                            <span class="text-blue-400 font-mono font-bold" th:text="${request.whatsapp}">0812XXXXXXXX</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Tanggal Pengajuan</span>
+                            <span class="text-slate-400 font-mono" th:text="${request.tanggalPengajuan}">2026-05-28</span>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/60">
+                        <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Keterangan / Keperluan Berkas</span>
+                        <p class="text-slate-300 block leading-relaxed italic mt-1 bg-slate-900 p-3 rounded-lg border border-slate-800" th:text="${request.keterangan}">Bantuan modal KUR Mandiri</p>
+                    </div>
+                </div>
+
+                <!-- Formulir Spring POST -->
+                <form th:action="@{/admin/layanan/save}" th:object="${request}" method="post" class="space-y-6 text-xs text-slate-300">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Keputusan Kepengurusan Berkas</label>
+                        <select th:field="*{status}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
+                            <option value="PENDING">PENDING (Menunggu Berkas Tambahan)</option>
+                            <option value="DIPROSES">DIPROSES (Verifikasi Staf Lapangan / RT)</option>
+                            <option value="SELESAI">SELESAI (Siap Diunduh / Diambil)</option>
+                            <option value="DITOLAK">DITOLAK (Berkas Tidak Sesuai Syarat)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-400">Catatan Tanggapan Ke Pemohon (Tampil Di Tracker Layanan Warga)</label>
+                        <textarea th:field="*{catatanAdmin}" rows="8" placeholder="Ketik alasan penolakan, instruksi pengambilan fisik, atau pesan penting berkas..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-emerald-500 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+                        <a href="/admin/layanan" class="bg-slate-800 hover:bg-slate-700 text-slate-350 font-bold px-5 py-3 rounded-xl transition-colors">Batal</a>
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 font-bold text-white px-6 py-3 rounded-xl transition-colors shadow-md">Simpan Keputusan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

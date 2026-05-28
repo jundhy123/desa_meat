@@ -1,5 +1,41 @@
-<footer th:fragment="footer">
-    <div class="footer-bottom">
-        &copy; 2026 Desa Meat Balige. All rights reserved.
+<footer th:fragment="footer" class="bg-[#050c14] text-[#9ca3af] py-12 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+            <h3 class="text-white font-display font-medium text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-water text-emerald-400"></i>
+                <span>Desa Meat</span>
+            </h3>
+            <p class="text-xs leading-relaxed">
+                Desa wisata bersejarah di pinggiran Danau Toba yang berkomitmen menjaga adat leluhur, kerajinan seni tenun Ulos, dan asrinya bentang alam pegunungan Tampahan.
+            </p>
+        </div>
+        <div>
+            <h4 class="text-white text-xs font-semibold uppercase tracking-widest mb-4">Navigasi Utama</h4>
+            <ul class="text-xs space-y-2.5">
+                <li><a href="/home" class="hover:text-white transition-colors">Beranda</a></li>
+                <li><a href="/profil-desa" class="hover:text-white transition-colors">Profil Desa</a></li>
+                <li><a href="/wisata" class="hover:text-white transition-colors">Destinasi Wisata</a></li>
+                <li><a href="/umkm" class="hover:text-white transition-colors">Katalog Produk UMKM</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="text-white text-xs font-semibold uppercase tracking-widest mb-4">Layanan Publik</h4>
+            <ul class="text-xs space-y-2.5">
+                <li><a href="/layanan" class="hover:text-white transition-colors">Pengajuan Surat Online</a></li>
+                <li><a href="/layanan?lacak=true" class="hover:text-white transition-colors">Lacak Berkas Surat</a></li>
+                <li><a href="/organisasi" class="hover:text-white transition-colors">Kepengurusan Karang Taruna</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="text-white text-xs font-semibold uppercase tracking-widest mb-4">Hubungi Kami</h4>
+            <p class="text-xs space-y-2 block">
+                <span class="block"><i class="fa-solid fa-map-location mr-2 text-emerald-400"></i> Jl. Pantai Meat, Kec. Tampahan, Kabupaten Toba, Sumatera Utara</span>
+                <span class="block"><i class="fa-solid fa-envelope mr-2 text-emerald-400"></i> info@desameatbalige.go.id</span>
+                <span class="block"><i class="fa-solid fa-phone mr-2 text-emerald-400"></i> +62 822-1234-5678</span>
+            </p>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-slate-900 text-center text-xs">
+        <p>&copy; 2026 Pemerintah Desa Meat Balige. Seluruh hak cipta dilindungi undang-undang.</p>
     </div>
 </footer>

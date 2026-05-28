@@ -1,14 +1,15 @@
 package com.desameat.website.repository;
 
-import java.util.List;
-
+import com.desameat.website.model.Penduduk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.desameat.website.model.Penduduk;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PendudukRepository extends JpaRepository<Penduduk, Long> {
+    Optional<Penduduk> findByNik(String nik);
     List<Penduduk> findByNamaContainingIgnoreCase(String nama);
-    long countByJenisKelamin(String jenisKelamin);
+    boolean existsByNik(String nik);
 }

@@ -1,161 +1,379 @@
 package com.desameat.website.controller;
 
-import java.util.ArrayList; 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.desameat.website.model.*;
+import com.desameat.website.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.desameat.website.model.Penduduk;
-import com.desameat.website.service.PendudukService;
+import com.desameat.website.utils.FileUploadUtil;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired 
-    private PendudukService service;
+    @Autowired
+    private PendudukService pendudukService;
 
-    // 1. HALAMAN DASHBOARD ADMIN
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("activePage", "dashboard");
+    @Autowired
+    private LayananService layananService;
 
-        // Ambil map statistik gabungan dari PendudukService dengan aman
-        Map<String, Object> pendudukStats;
-        try {
-            pendudukStats = service.getStatistik();
-            if (pendudukStats == null) {
-                pendudukStats = new HashMap<>();
-            }
-        } catch (Exception e) {
-            pendudukStats = new HashMap<>();
-        }
+    @Autowired
+    private WisataService wisataService;
 
-        // Sediakan isi Map 'stats' untuk data Berita & Pengumuman agar tidak error
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalBerita", 0); 
-        stats.put("beritaPublished", 0);
-        stats.put("totalPengumuman", 0); 
-        stats.put("pengumumanAktif", 0);
-        stats.put("beritaDraft", 0);                     
-        stats.put("pengumumanNonaktif", 0);              
-        stats.put("beritaKategoriBerita", 0);            
-        stats.put("beritaKategoriPengumuman", 0);        
-        stats.put("beritaKategoriAcara", 0);             
-        stats.put("beritaKategoriInformasi", 0);          
-        model.addAttribute("stats", stats);
+    @Autowired
+    private UmkmService umkmService;
 
-        // Kirim data statistik penduduk ke HTML Dashboard
-        model.addAttribute("totalPenduduk", pendudukStats.getOrDefault("total", 0));
-        model.addAttribute("statGender", pendudukStats.getOrDefault("gender", new HashMap<>()));
-        model.addAttribute("statPekerjaan", pendudukStats.getOrDefault("pekerjaan", new HashMap<>()));
+    @Autowired
+    private BeritaService beritaService;
 
-        // Sediakan objek list kosong untuk tabel bawah dashboard
-        model.addAttribute("beritaTerbaru", new ArrayList<>());
-        model.addAttribute("pengumumanTerbaru", new ArrayList<>());
+    @Autowired
+    private OrganisasiService organisasiService;
+
+    @Autowired
+    private GaleriService galeriService;
+
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+    @GetMapping({"", "/dashboard"})
+    public String viewDashboard(Model model) {
+
+        model.addAttribute("cntPenduduk", pendudukService.getAllPenduduk().size());
+        model.addAttribute("cntWisata", wisataService.getAllWisata().size());
+        model.addAttribute("cntUmkm", umkmService.getAllUmkm().size());
+        model.addAttribute("cntBerita", beritaService.getAllBerita().size());
+
+        model.addAttribute("cntLayananPending",
+                layananService.getAllRequests()
+                        .stream()
+                        .filter(r -> r.getStatus() != null && "PENDING".equalsIgnoreCase(r.getStatus().name()))
+                        .count()
+        );
+
+        model.addAttribute("recentLayanan", layananService.getAllRequests());
 
         return "admin/dashboard";
     }
 
-    // 2. HALAMAN UTAMA PENDUDUK (Aman dari bentrok fragment navbar & database)
+    // ==========================================
+    // BERITA
+    // ==========================================
+    @GetMapping("/berita")
+    public String adminBerita(Model model) {
+        model.addAttribute("posts",
+                beritaService.getAllBerita() != null
+                        ? beritaService.getAllBerita()
+                        : java.util.Collections.emptyList()
+        );
+        return "admin/berita/index";
+    }
+
+    @GetMapping("/berita/create")
+    public String createBeritaForm(Model model) {
+        model.addAttribute("post", new Berita());
+        return "admin/berita/create";
+    }
+
+    @GetMapping("/berita/edit/{id}")
+    public String editBeritaForm(@PathVariable Long id, Model model) {
+
+        Optional<Berita> post = beritaService.getBeritaById(id);
+
+        if (post.isPresent()) {
+            model.addAttribute("post", post.get());
+            return "admin/berita/edit";
+        }
+
+        return "redirect:/admin/berita";
+    }
+
+    @PostMapping("/berita/save")
+    public String saveBerita(@ModelAttribute("post") Berita berita,
+                             @RequestParam("imageFile") MultipartFile imageFile,
+                             RedirectAttributes redirectAttributes) {
+
+        try {
+            if (!imageFile.isEmpty()) {
+                String fileName = FileUploadUtil.saveFile("uploads", imageFile);
+                berita.setGambar("/uploads/" + fileName);
+            }
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Gagal mengunggah gambar: " + e.getMessage());
+            return "redirect:/admin/berita/create";
+        }
+
+        // FIX NULL SAFETY
+        if (berita.getTanggal() == null) {
+            berita.setTanggal(LocalDate.now());
+        }
+
+        if (berita.getJudul() == null || berita.getJudul().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Judul tidak boleh kosong");
+            return "redirect:/admin/berita/create";
+        }
+
+        beritaService.saveBerita(berita);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Berita berhasil disimpan");
+
+        return "redirect:/admin/berita";
+    }
+
+    @GetMapping("/berita/delete/{id}")
+    public String deleteBerita(@PathVariable Long id) {
+        beritaService.deleteBerita(id);
+        return "redirect:/admin/berita";
+    }
+
+    // ==========================================
+    // WISATA
+    // ==========================================
+    @GetMapping("/wisata")
+    public String adminWisata(Model model) {
+        model.addAttribute("destinations", wisataService.getAllWisata());
+        return "admin/wisata/index";
+    }
+
+    @GetMapping("/wisata/create")
+    public String createWisataForm(Model model) {
+        model.addAttribute("destination", new Wisata());
+        return "admin/wisata/create";
+    }
+
+    @GetMapping("/wisata/edit/{id}")
+    public String editWisataForm(@PathVariable Long id, Model model) {
+        Optional<Wisata> wisata = wisataService.getWisataById(id);
+        if (wisata.isPresent()) {
+            model.addAttribute("destination", wisata.get());
+            return "admin/wisata/edit";
+        }
+        return "redirect:/admin/wisata";
+    }
+
+    @PostMapping("/wisata/save")
+    public String saveWisata(@ModelAttribute("destination") Wisata wisata,
+                             @RequestParam("imageFile") MultipartFile imageFile) {
+        try {
+            if (!imageFile.isEmpty()) {
+                String fileName = FileUploadUtil.saveFile("uploads", imageFile);
+                wisata.setGambar("/uploads/" + fileName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        wisataService.saveWisata(wisata);
+        return "redirect:/admin/wisata";
+    }
+
+    @GetMapping("/wisata/delete/{id}")
+    public String deleteWisata(@PathVariable Long id) {
+        wisataService.deleteWisata(id);
+        return "redirect:/admin/wisata";
+    }
+
+    // ==========================================
+    // UMKM
+    // ==========================================
+    @GetMapping("/umkm")
+    public String adminUmkm(Model model) {
+        model.addAttribute("products", umkmService.getAllUmkm());
+        return "admin/umkm/index";
+    }
+
+    @GetMapping("/umkm/create")
+    public String createUmkmForm(Model model) {
+        Umkm umkm = new Umkm();
+        umkm.setRating(4.8);
+        model.addAttribute("product", umkm);
+        return "admin/umkm/create";
+    }
+
+    @GetMapping("/umkm/edit/{id}")
+    public String editUmkmForm(@PathVariable Long id, Model model) {
+        Optional<Umkm> umkm = umkmService.getUmkmById(id);
+        if (umkm.isPresent()) {
+            model.addAttribute("product", umkm.get());
+            return "admin/umkm/edit";
+        }
+        return "redirect:/admin/umkm";
+    }
+
+    @PostMapping("/umkm/save")
+    public String saveUmkm(@ModelAttribute("product") Umkm umkm,
+                           @RequestParam("imageFile") MultipartFile imageFile) {
+
+        try {
+            if (!imageFile.isEmpty()) {
+                String fileName = FileUploadUtil.saveFile("uploads", imageFile);
+                umkm.setGambar("/uploads/" + fileName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (umkm.getRating() == null) {
+            umkm.setRating(4.8);
+        }
+
+        umkmService.saveUmkm(umkm);
+        return "redirect:/admin/umkm";
+    }
+
+    @GetMapping("/umkm/delete/{id}")
+    public String deleteUmkm(@PathVariable Long id) {
+        umkmService.deleteUmkm(id);
+        return "redirect:/admin/umkm";
+    }
+
+    // ==========================================
+    // PENDUDUK
+    // ==========================================
     @GetMapping("/penduduk")
-    public String penduduk(Model model, @RequestParam(required = false) String cari) {
-        model.addAttribute("activePage", "penduduk");
-        
-        // Ambil statistik asli, jika gagal/null buatkan fallback kosongan agar fragment navbar tidak Error 500
-        Map<String, Object> pendudukStats;
-        try {
-            pendudukStats = service.getStatistik();
-            if (pendudukStats == null) {
-                pendudukStats = new HashMap<>();
-            }
-        } catch (Exception e) {
-            pendudukStats = new HashMap<>();
-        }
-        // Pastikan variabel 'total' ada di dalam map statistik
-        pendudukStats.putIfAbsent("total", 0);
-        model.addAttribute("statistik", pendudukStats);
-        
-        // Sediakan isi Map 'stats' kosong juga di halaman ini, berjaga-jaga jika fragment sidebar memanggilnya
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalBerita", 0);
-        stats.put("totalPengumuman", 0);
-        model.addAttribute("stats", stats);
-        
-        // Proteksi awal flash attribute 'sukses'
-        if (!model.containsAttribute("sukses")) {
-            model.addAttribute("sukses", null);
-        }
-        
-        // Ambil data asli dari database dengan pengaman try-catch
-        try {
-            if (cari != null && !cari.isEmpty()) {
-                model.addAttribute("pendudukList", service.cariByNama(cari));
-                model.addAttribute("cari", cari);
-            } else {
-                model.addAttribute("pendudukList", service.getAllPenduduk());
-            }
-        } catch (Exception e) {
-            // Jika database kosong atau query eror, gagalkan ke list kosong (mencegah layaran putih 500)
-            model.addAttribute("pendudukList", new ArrayList<Penduduk>());
-        }
-        
-        return "admin/penduduk"; 
+    public String adminPenduduk(Model model) {
+        model.addAttribute("citizens", pendudukService.getAllPenduduk());
+        return "admin/penduduk/index";
     }
 
-    // 3. HALAMAN FORM TAMBAH PENDUDUK
-    @GetMapping("/penduduk/tambah")
-    public String formTambah(Model model) {
-        model.addAttribute("activePage", "penduduk");
-        model.addAttribute("penduduk", new Penduduk()); 
-        return "admin/penduduk-form";
+    @GetMapping("/penduduk/create")
+    public String createPendudukForm(Model model) {
+        model.addAttribute("citizen", new Penduduk());
+        return "admin/penduduk/create";
     }
 
-    // 4. HALAMAN FORM EDIT PENDUDUK
     @GetMapping("/penduduk/edit/{id}")
-    public String formEdit(@PathVariable Long id, Model model) {
-        try {
-            Penduduk p = service.getById(id);
-            if (p == null) return "redirect:/admin/penduduk";
-            model.addAttribute("activePage", "penduduk");
-            model.addAttribute("penduduk", p); 
-            return "admin/penduduk-form";
-        } catch (Exception e) {
-            return "redirect:/admin/penduduk";
-        }
-    }
-
-    // 5. PROSES SIMPAN DATA (POST)
-    @PostMapping("/penduduk/simpan")
-    public String simpan(@ModelAttribute Penduduk p, RedirectAttributes ra) {
-        try {
-            service.simpan(p);
-            ra.addFlashAttribute("sukses", "Data penduduk berhasil disimpan!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Gagal menyimpan data!");
+    public String editPendudukForm(@PathVariable Long id, Model model) {
+        Optional<Penduduk> citizen = pendudukService.getPendudukById(id);
+        if (citizen.isPresent()) {
+            model.addAttribute("citizen", citizen.get());
+            return "admin/penduduk/edit";
         }
         return "redirect:/admin/penduduk";
     }
 
-    // 6. PROSES HAPUS DATA (POST)
-    @PostMapping("/penduduk/hapus/{id}")
-    public String hapus(@PathVariable Long id, RedirectAttributes ra) {
-        try {
-            service.hapus(id);
-            ra.addFlashAttribute("sukses", "Data penduduk berhasil dihapus!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Gagal menghapus data!");
-        }
+    @PostMapping("/penduduk/save")
+    public String savePenduduk(@ModelAttribute("citizen") Penduduk penduduk) {
+        pendudukService.savePenduduk(penduduk);
         return "redirect:/admin/penduduk";
+    }
+
+    @GetMapping("/penduduk/delete/{id}")
+    public String deletePenduduk(@PathVariable Long id) {
+        pendudukService.deletePenduduk(id);
+        return "redirect:/admin/penduduk";
+    }
+
+    // ==========================================
+    // ORGANISASI
+    // ==========================================
+    @GetMapping("/organisasi")
+    public String adminOrganisasi(Model model) {
+        model.addAttribute("orgs", organisasiService.getAllOrganisasi());
+        return "admin/organisasi/index";
+    }
+
+    @GetMapping("/organisasi/create")
+    public String createOrganisasiForm(Model model) {
+        model.addAttribute("org", new Organisasi());
+        return "admin/organisasi/create";
+    }
+
+    @GetMapping("/organisasi/edit/{id}")
+    public String editOrganisasiForm(@PathVariable Long id, Model model) {
+        Optional<Organisasi> org = organisasiService.getOrganisasiById(id);
+        if (org.isPresent()) {
+            model.addAttribute("org", org.get());
+            return "admin/organisasi/edit";
+        }
+        return "redirect:/admin/organisasi";
+    }
+
+    @PostMapping("/organisasi/save")
+    public String saveOrganisasi(@ModelAttribute("org") Organisasi organisasi) {
+        organisasiService.saveOrganisasi(organisasi);
+        return "redirect:/admin/organisasi";
+    }
+
+    @GetMapping("/organisasi/delete/{id}")
+    public String deleteOrganisasi(@PathVariable Long id) {
+        organisasiService.deleteOrganisasi(id);
+        return "redirect:/admin/organisasi";
+    }
+
+    // ==========================================
+    // GALERI
+    // ==========================================
+    @GetMapping("/galeri")
+    public String adminGaleri(Model model) {
+        model.addAttribute("photos", galeriService.getAllGaleri());
+        return "admin/galeri/index";
+    }
+
+    @GetMapping("/galeri/create")
+    public String createGaleriForm(Model model) {
+        model.addAttribute("photo", new Galeri());
+        return "admin/galeri/create";
+    }
+
+    @PostMapping("/galeri/save")
+    public String saveGaleri(@ModelAttribute("photo") Galeri galeri,
+                             @RequestParam("imageFile") MultipartFile imageFile) {
+        try {
+            if (!imageFile.isEmpty()) {
+                String fileName = FileUploadUtil.saveFile("uploads", imageFile);
+                galeri.setUrlGambar("/uploads/" + fileName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        galeriService.saveGaleri(galeri);
+        return "redirect:/admin/galeri";
+    }
+
+    @GetMapping("/galeri/delete/{id}")
+    public String deleteGaleri(@PathVariable Long id) {
+        galeriService.deleteGaleri(id);
+        return "redirect:/admin/galeri";
+    }
+
+    // ==========================================
+    // LAYANAN
+    // ==========================================
+    @GetMapping("/layanan")
+    public String adminLayanan(Model model) {
+        model.addAttribute("requests", layananService.getAllRequests());
+        return "admin/layanan/index";
+    }
+
+    @GetMapping("/layanan/edit/{id}")
+    public String editLayananForm(@PathVariable String id, Model model) {
+        Optional<Layanan> request = layananService.getRequestById(id);
+        if (request.isPresent()) {
+            model.addAttribute("request", request.get());
+            return "admin/layanan/edit";
+        }
+        return "redirect:/admin/layanan";
+    }
+
+    @PostMapping("/layanan/save")
+    public String saveLayanan(@ModelAttribute("request") Layanan request) {
+
+        if (request.getStatus() == null) {
+            return "redirect:/admin/layanan";
+        }
+
+        layananService.updateRequestStatus(
+                request.getId(),
+                request.getStatus(),
+                request.getCatatanAdmin()
+        );
+
+        return "redirect:/admin/layanan";
     }
 }

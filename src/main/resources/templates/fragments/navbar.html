@@ -1,19 +1,37 @@
-<header th:fragment="navbar">
-    <div class="nav-container">
-        <a th:href="@{/}" class="logo" style="text-decoration: none;">
-            <div class="logo-icon">D</div>
-            Desa <span>Meat</span>
-        </a>
+<nav th:fragment="navbar" class="bg-brand-navy text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <div class="text-xl font-display font-black tracking-tight text-white flex items-center gap-2">
+                    <i class="fa-solid fa-water text-emerald-400"></i>
+                    <span>Desa <span class="text-emerald-400">Meat</span> Balige</span>
+                </div>
+            </div>
+            <!-- Desktop menu -->
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="/home" class="hover:text-emerald-300 transition-colors">Beranda</a>
+                <a href="/profil-desa" class="hover:text-emerald-300 transition-colors">Profil</a>
+                <a href="/berita" class="hover:text-emerald-300 transition-colors">Kabar Berita</a>
+                <a href="/wisata" class="hover:text-emerald-300 transition-colors">Wisata</a>
+                <a href="/umkm" class="hover:text-emerald-300 transition-colors">UMKM</a>
+                <a href="/organisasi" class="hover:text-emerald-300 transition-colors">Lembaga</a>
+                <a href="/layanan" class="hover:text-emerald-300 transition-colors">Layanan Digital</a>
+                <a href="/kontak" class="hover:text-emerald-300 transition-colors">Kontak</a>
+            </div>
+            
+            <!-- Auth Link -->
+            <div class="hidden md:flex items-center">
+                <a href="/auth/login" class="bg-[#10b981] hover:bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all shadow-sm">
+                    <i class="fa-solid fa-lock mr-2"></i>Admin Area
+                </a>
+            </div>
 
-        <ul class="nav-menu">
-            <li><a th:href="@{/}" class="nav-link">Beranda</a></li>
-            <li><a th:href="@{/profil}" class="nav-link">Profil</a></li>
-            <li><a th:href="@{/wisata}" class="nav-link">Wisata</a></li>
-            <li><a th:href="@{/umkm}" class="nav-link">UMKM</a></li>
-            <li><a th:href="@{/layanan}" class="nav-link">Layanan Surat</a></li>
-            <li><a th:href="@{/galeri}" class="nav-link">Galeri</a></li>
-            <li><a th:href="@{/kontak}" class="nav-link">Kontak</a></li>
-            <li><a th:href="@{/auth/login}" class="btn-login">Login Admin</a></li>
-        </ul>
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+                <button type="button" @click="open = !open" class="text-gray-400 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
     </div>
-</header>
+</nav>

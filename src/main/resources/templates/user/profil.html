@@ -1,101 +1,120 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda - Website Resmi Desa Meat</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<head th:replace="fragments/head :: head('Profil Desa')"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <div class="logo-icon"><i class="fa-solid fa-water"></i></div>
-                Desa<span>Meat</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Beranda</a></li>
-                <li><a href="/profil" class="nav-link active">Profil</a></li>
-                <li><a href="/wisata" class="nav-link">Wisata</a></li>
-                <li><a href="/umkm" class="nav-link">UMKM</a></li>
-                <li><a href="/layanan" class="nav-link">Layanan Surat</a></li>
-                <li><a href="/galeri" class="nav-link">Galeri</a></li>
-                <li><a href="/kontak" class="nav-link">Kontak</a></li>
-                <li><a href="/auth/login" class="nav-link btn-login">Login Admin</a></li>
-            </ul>
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Page Header Hero Banner -->
+    <div class="bg-brand-navy text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <h1 class="text-3xl md:text-4xl font-display font-black">Profil & Asal-Usul Desa</h1>
+            <p class="text-slate-400 max-w-xl mx-auto text-xs md:text-sm">
+                Mengenal sejarah panjang, visi pembangunan terintegrasi, dan struktur kepengurusan aseli Toba di Desa Meat Balige.
+            </p>
         </div>
-    </header>
-<!-- CONTENT (FOLLOW CONTACT STYLE) -->
-<section class="contact-section">
+    </div>
 
-    <div class="contact-container">
-        <center>
+    <!-- Main Content Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        
+        <!-- Left Side: Core content chapters -->
+        <div class="lg:col-span-8 space-y-12">
+            
+            <!-- Sejarah Card -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-150/70 shadow-sm space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                    <div class="w-10 h-10 bg-[#eefcfa] text-emerald-600 rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h2 class="text-lg font-display font-bold text-slate-900">Sejarah & Latar Belakang</h2>
+                </div>
+                <div class="text-slate-600 text-sm leading-relaxed space-y-4">
+                    <p th:text="${profil.sejarah}">Sejarah Desa Meat...</p>
+                </div>
+            </div>
 
-        <!-- TITLE -->
-        <div class="contact-header">
-            <h2>Profil Desa</h2>
-            <p>Visi dan Misi Desa Meat</p>
-        </div>
-<br><br>
-                    <!-- PROFIL CARD -->
-        <div th:if="${profil != null}" class="contact-grid">
-
-            <!-- VISI -->
-            <div class="contact-card">
-                <h3><i class="fa-solid fa-eye"></i> Visi Desa</h3>
-
-                <div class="contact-list">
-                    <div th:each="v : ${profil.visi}" class="contact-item">
-                        <div class="contact-icon">
-                            <span th:text="${v.urutan}"></span>
+            <!-- Visi & Misi Card -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-150/70 shadow-sm space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h2 class="text-lg font-display font-bold text-slate-900">Visi & Misi Desa</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Visi Utama</span>
+                        <p class="font-display font-bold text-sm text-slate-800 italic" th:text="${profil.visi}">"Visi kami..."</p>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">Misi Pembangunan</span>
+                        <div class="text-slate-605 text-xs md:text-sm pl-1 leading-relaxed whitespace-pre-line" th:text="${profil.misi}">
+                            1. Meningkatkan pelayanan publik.
                         </div>
-                        <div class="contact-text">
-                            <p th:text="${v.isi}"></p>
-                        </div>
-                        <br>
                     </div>
                 </div>
             </div>
-<br><br>
-            <!-- MISI -->
-            <div class="contact-card">
-                <h3><i class="fa-solid fa-bullseye"></i> Misi Desa</h3>
 
-                <div class="contact-list">
-                    <div th:each="m : ${profil.misi}" class="contact-item">
-                        <div class="contact-icon">
-                            <span th:text="${m.urutan}"></span>
-                        </div>
-                        <div class="contact-text">
-                            <p th:text="${m.isi}"></p>
-                        </div>
-                        <br>
+            <!-- Geografis Section -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-150/70 shadow-sm space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-map-location-dot"></i>
                     </div>
+                    <h2 class="text-lg font-display font-bold text-slate-900">Letak Geografis & Batas Kepemilikan</h2>
+                </div>
+                <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line" th:text="${profil.deskripsiGeografis}">
+                    Desa Meat dikelilingi perbukitan hijau elok dan menghadap langsung ke hamparan danau.
                 </div>
             </div>
 
         </div>
 
-        <!-- EMPTY -->
-        <div th:if="${profil == null}" class="contact-card">
-            <p>Data profil belum tersedia.</p>
+        <!-- Right Side: Kepala Desa / Aparatur Profile Widget -->
+        <div class="lg:col-span-4 space-y-8 sticky top-24">
+            
+            <div class="bg-white rounded-3xl overflow-hidden border border-slate-150/70 shadow-sm">
+                <div class="bg-brand-navy text-white text-center py-6 px-4 relative">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=300&q=80')] bg-cover opacity-10"></div>
+                    <span class="text-[9px] uppercase font-bold text-emerald-400 tracking-wider">Pemerintah Desa Meat</span>
+                    <h3 class="font-display font-bold text-base mt-1">Kepala Desa Aktif</h3>
+                </div>
+                <div class="p-6 text-center space-y-4">
+                    <div class="w-24 h-24 mx-auto bg-slate-100 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-user-tie text-5xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-display font-black text-slate-800 text-base" th:text="${profil.kepalaDesa != null ? profil.kepalaDesa : 'Bpk. Janri Simanjuntak'}">Bpk. Janri Simanjuntak</h4>
+                        <span class="text-xs text-slate-400">Periode Jabatan: 2023 - 2029</span>
+                    </div>
+                    <div class="border-t border-slate-100 pt-4 text-xs text-slate-550 leading-relaxed italic">
+                        "Kami berkomitmen melayani masyarakat Desa Meat setulus hati dengan memanfaatkan teknologi digital untuk pelayanan mandiri yang transparan, merata, dan berkelanjutan."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Village Office Working hours -->
+            <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6 text-slate-700 space-y-3">
+                <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-clock"></i>
+                    Jam Operasional Kantor Desa
+                </h4>
+                <div class="text-xs space-y-1.5 leading-relaxed">
+                    <p class="flex justify-between"><span>Senin - Kamis:</span> <strong class="text-slate-800">08:00 - 16:00 WIB</strong></p>
+                    <p class="flex justify-between"><span>Jumat:</span> <strong class="text-slate-800">08:00 - 15:30 WIB</strong></p>
+                    <p class="flex justify-between text-red-750"><span>Sabtu - Minggu:</span> <strong>Tutup (Hari Libur)</strong></p>
+                </div>
+            </div>
+
         </div>
-        </center>
 
     </div>
 
-</section>
-
-<!-- FOOTER -->
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2026 Pemerintah Desa Meat. Hak Cipta Dilindungi Undang-Undang.</p>
-    </div>
-</footer>
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

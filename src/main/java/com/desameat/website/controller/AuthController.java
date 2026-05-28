@@ -18,9 +18,34 @@ public class AuthController {
     private AuthService authService;
 
     @GetMapping("/login")
-    public String showLoginPage(Model model) {
+    public String showLoginPage(@RequestParam(value = "error", required = false) String error, Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
+        if (error != null) {
+            model.addAttribute("error", "Username atau Password yang Anda masukkan salah.");
+        }
         return "auth/login";
+    }
+
+    @GetMapping("/register")
+    public String showRegisterPage(Model model) {
+        model.addAttribute("registerRequest", new RegisterRequest());
+        return "auth/register";
+    }
+
+    @PostMapping("/register-process")
+    public String processRegister(@ModelAttribute("registerRequest") RegisterRequest registerRequest, Model model) {
+        try {
+            User user = new User();
+            user.setUsername(registerRequest.getUsername());
+            user.setEmail(registerRequest.getEmail());
+            user.setPassword(registerRequest.getPassword());
+            user.setFullName(registerRequest.getFullName());
+            authService.registerUser(user);
+            return "redirect:/auth/login?registered=true";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "auth/register";
+        }
     }
 
     @PostMapping("/login-process")

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Struktur Lembaga')"></head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
+
+    <!-- Header Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Page Header Hero Banner -->
+    <div class="bg-brand-navy text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <h1 class="text-3xl md:text-4xl font-display font-black">Lembaga & Organisasi Desa</h1>
+            <p class="text-slate-400 max-w-lg mx-auto text-xs md:text-sm">
+                Pelajari struktur komite adat, Badan Permusyawaratan Desa (BPD), PKK, dan perkumpulan pemuda Karang Taruna Desa Meat.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Container list -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div th:each="o : ${orgs}" class="bg-white rounded-3xl p-6 border border-slate-150/80 shadow-sm flex gap-5 hover:shadow-md transition-all">
+                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+                    <i th:class="${o.kategori == 'PKK' ? 'fa-solid fa-users-rectangle' :
+                                   o.kategori == 'Karang Taruna' ? 'fa-solid fa-people-group' : 'fa-solid fa-graduation-cap'}"></i>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-[10px] bg-slate-100 text-slate-750 font-bold px-2.5 py-0.5 rounded-full" th:text="${o.kategori}">Karang Taruna</span>
+                    <h3 class="font-display font-bold text-base text-slate-900" th:text="${o.nama}">Karang Taruna Taruna Sakti</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed" th:text="${o.deskripsi}">Wadah kepemudaan untuk mengembangkan program bakti sosial, kemitraan ekowisata, dan olahraga desa.</p>
+                    <div class="pt-2 text-xs text-slate-600 border-t border-slate-100 mt-2">
+                        <p class="flex justify-between"><span>Ketua Pengurus:</span> <strong class="text-slate-800" th:text="${o.ketua}">Toni Simanjuntak</strong></p>
+                        <p class="flex justify-between mt-1"><span>Jumlah Anggota:</span> <strong class="text-slate-800" th:text="${o.jumlahAnggota} + ' Jiwa'">45 Jiwa</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Segment -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

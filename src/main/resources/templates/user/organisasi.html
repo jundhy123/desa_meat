@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Organisasi Desa Meat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); 
+            font-family: 'Inter', sans-serif;
+            padding-top: 50px; 
+            padding-bottom: 80px; 
+        }
+        
+        .section-title { 
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+            position: relative; 
+            padding-bottom: 15px; 
+        }
+        
+        .section-title::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 80px; 
+            height: 4px; 
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8); 
+            border-radius: 2px;
+        }
+
+        .subtitle-desa {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* --- Gaya Bagan & Garis Hirarki --- */
+        .org-container {
+            position: relative;
+            margin-top: 40px;
+        }
+
+        .group-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #475569;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        /* Desain Kartu Struktur */
+        .node-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .node-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Indikator Warna di Atas Kartu */
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+        }
+
+        /* Variasi Warna sesuai Tingkatan */
+        .level-pimpinan .node-card::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .level-sekretariat .node-card::before { background: linear-gradient(90deg, #10b981, #047857); }
+        .level-teknis .node-card::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .level-wilayah .node-card::before { background: linear-gradient(90deg, #6366f1, #4338ca); }
+
+        .jabatan-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+
+        /* Tag warna dinamis */
+        .level-pimpinan .jabatan-tag { background-color: #eff6ff; color: #1d4ed8; }
+        .level-sekretariat .jabatan-tag { background-color: #ecfdf5; color: #047857; }
+        .level-teknis .jabatan-tag { background-color: #fffbeb; color: #b45309; }
+        .level-wilayah .jabatan-tag { background-color: #eef2ff; color: #4338ca; }
+
+        .nama-pejabat {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        /* Efek pembatas dekoratif kecil di dalam kartu */
+        .card-line {
+            width: 30px;
+            height: 2px;
+            background-color: #cbd5e1;
+            margin: 8px auto 0 auto;
+            border-radius: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container text-center org-container">
+    <div class="mb-5">
+        <h1 class="section-title text-uppercase">Struktur Organisasi</h1>
+        <p class="subtitle-desa mt-3 fs-5">Pemerintah Desa Meat</p>
+        <p class="text-muted small">Kecamatan Tampahan, Kabupaten Toba, Provinsi Sumatera Utara</p>
+    </div>
+
+    <div class="level-pimpinan row justify-content-center g-4 mb-5">
+        <div class="col-md-4">
+            <div class="node-card p-4">
+                <span class="jabatan-tag" th:text="${kepalaDesa.jabatan}">KEPALA DESA</span>
+                <div class="nama-pejabat" th:text="${kepalaDesa.nama}">Janri Simanjuntak</div>
+                <div class="card-line"></div>
+            </div>
+        </div>
+        <div class="w-100 d-none d-md-block" style="height: 15px;"></div> 
+        <div class="col-md-4">
+            <div class="node-card p-4">
+                <span class="jabatan-tag" th:text="${sekdes.jabatan}">SEKRETARIS DESA</span>
+                <div class="nama-pejabat" th:text="${sekdes.nama}">Doharni Marpaung</div>
+                <div class="card-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" style="border-top: 1px dashed #cbd5e1;">
+
+    <div class="level-sekretariat my-5">
+        <div class="group-title text-uppercase">Unsur Sekretariat Desa (Staf Administrasi)</div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4" th:each="staf : ${sekretariatList}">
+                <div class="node-card p-4 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <span class="jabatan-tag" th:text="${staf.jabatan}">JABATAN</span>
+                    <div class="nama-pejabat" th:text="${staf.nama}">Nama Staf</div>
+                    <div class="card-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" style="border-top: 1px dashed #cbd5e1;">
+
+    <div class="level-teknis my-5">
+        <div class="group-title text-uppercase">Unsur Pelaksana Teknis (Lapangan)</div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4" th:each="kasi : ${kasiList}">
+                <div class="node-card p-4 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <span class="jabatan-tag" th:text="${kasi.jabatan}">JABATAN</span>
+                    <div class="nama-pejabat" th:text="${kasi.nama}">Nama Kasi</div>
+                    <div class="card-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" style="border-top: 1px dashed #cbd5e1;">
+
+    <div class="level-wilayah my-5">
+        <div class="group-title text-uppercase">Unsur Kewilayahan (Kepala Dusun)</div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4" th:each="kadus : ${kadusList}">
+                <div class="node-card p-4 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <span class="jabatan-tag" th:text="${kadus.jabatan}">JABATAN</span>
+                    <div class="nama-pejabat" th:text="${kadus.nama}">Nama Kadus</div>
+                    <div class="card-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

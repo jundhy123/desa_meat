@@ -39,6 +39,9 @@ public class AdminController {
     @Autowired
     private GaleriService galeriService;
 
+    @Autowired
+    private ProfilService profilService;
+
     // ==========================================
     // DASHBOARD
     // ==========================================

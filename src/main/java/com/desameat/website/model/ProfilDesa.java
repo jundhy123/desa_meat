@@ -31,6 +31,21 @@ public class ProfilDesa {
     @Column(columnDefinition = "TEXT")
     private String alamat;
 
+    @Column(length = 255)
+    private String gambar;
+
+    @Column(length = 50)
+    private String periodeJabatan;
+
+    @Column(columnDefinition = "TEXT")
+    private String motto;
+
+    @Column(length = 100)
+    private String jamKerjaSeninKamis;
+
+    @Column(length = 100)
+    private String jamKerjaJumat;
+
     // =========================
     // RELASI KE USER (ADMIN PEMBUAT/PEMELIHARA DATA)
     // =========================
@@ -122,6 +137,46 @@ public class ProfilDesa {
 
     public void setAlamat(String alamat) {
         this.alamat = alamat;
+    }
+
+    public String getGambar() {
+        return gambar;
+    }
+
+    public void setGambar(String gambar) {
+        this.gambar = gambar;
+    }
+
+    public String getPeriodeJabatan() {
+        return periodeJabatan;
+    }
+
+    public void setPeriodeJabatan(String periodeJabatan) {
+        this.periodeJabatan = periodeJabatan;
+    }
+
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
+    public String getJamKerjaSeninKamis() {
+        return jamKerjaSeninKamis;
+    }
+
+    public void setJamKerjaSeninKamis(String jamKerjaSeninKamis) {
+        this.jamKerjaSeninKamis = jamKerjaSeninKamis;
+    }
+
+    public String getJamKerjaJumat() {
+        return jamKerjaJumat;
+    }
+
+    public void setJamKerjaJumat(String jamKerjaJumat) {
+        this.jamKerjaJumat = jamKerjaJumat;
     }
 
     public User getUser() {

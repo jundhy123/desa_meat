@@ -32,7 +32,8 @@
                     <h2 class="text-lg font-display font-bold text-slate-900">Sejarah & Latar Belakang</h2>
                 </div>
                 <div class="text-slate-600 text-sm leading-relaxed space-y-4">
-                    <p th:text="${profil.sejarah}">Sejarah Desa Meat...</p>
+                    <p>Desa Meat merupakan salah satu desa yang terletak di pesisir Danau Toba, tepatnya di Kecamatan Tampahan, Kabupaten Toba, Sumatera Utara. Desa ini memiliki sejarah panjang sebagai pemukiman masyarakat suku Batak Toba yang menjunjung tinggi nilai adat dan kelestarian alam.</p>
+                    <p>Dikenal sebagai "Desa Tenun", Meat telah lama menjadi pusat pengrajin Ulos Ragi Hotang secara manual. Keindahan lanskapnya yang dikelilingi perbukitan hijau dan hamparan air danau yang tenang menjadikan Desa Meat sebagai destinasi ekowisata unggulan yang tetap menjaga kemurnian budayanya di tengah arus modernisasi.</p>
                 </div>
             </div>
 
@@ -47,12 +48,17 @@
                 <div class="space-y-4">
                     <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Visi Utama</span>
-                        <p class="font-display font-bold text-sm text-slate-800 italic" th:text="${profil.visi}">"Visi kami..."</p>
+                        <p class="font-display font-bold text-sm text-slate-800 italic">"Mewujudkan Desa Meat sebagai pusat agrowisata budaya berbasis kearifan lokal yang mandiri, unggul, dan terintegrasi digital pada tahun 2029."</p>
                     </div>
                     <div class="space-y-2">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">Misi Pembangunan</span>
-                        <div class="text-slate-605 text-xs md:text-sm pl-1 leading-relaxed whitespace-pre-line" th:text="${profil.misi}">
-                            1. Meningkatkan pelayanan publik.
+                        <div class="text-slate-605 text-xs md:text-sm pl-1 leading-relaxed">
+                            <ul class="list-decimal pl-4 space-y-2">
+                                <li>Mengembangkan sektor pariwisata berbasis pelestarian budaya Batak Toba.</li>
+                                <li>Meningkatkan kualitas pelayanan publik melalui sistem administrasi digital yang transparan.</li>
+                                <li>Mengoptimalkan potensi ekonomi kreatif melalui pemberdayaan pengrajin Tenun Ulos.</li>
+                                <li>Menjaga kelestarian lingkungan dan ekosistem pesisir Danau Toba.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -64,10 +70,10 @@
                     <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg">
                         <i class="fa-solid fa-map-location-dot"></i>
                     </div>
-                    <h2 class="text-lg font-display font-bold text-slate-900">Letak Geografis & Batas Kepemilikan</h2>
+                    <h2 class="text-lg font-display font-bold text-slate-900">Letak Geografis & Batas Wilayah</h2>
                 </div>
-                <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line" th:text="${profil.deskripsiGeografis}">
-                    Desa Meat dikelilingi perbukitan hijau elok dan menghadap langsung ke hamparan danau.
+                <div class="text-slate-600 text-sm leading-relaxed">
+                    <p>Secara geografis, Desa Meat terletak di wilayah lembah yang menghadap langsung ke perairan Danau Toba. Desa ini berjarak sekitar 15 km dari pusat kota Balige. Wilayahnya didominasi oleh lahan pertanian, area pantai, dan lereng perbukitan yang asri.</p>
                 </div>
             </div>
 
@@ -87,7 +93,7 @@
                         <i class="fa-solid fa-user-tie text-5xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-display font-black text-slate-800 text-base" th:text="${profil.kepalaDesa != null ? profil.kepalaDesa : 'Bpk. Janri Simanjuntak'}">Bpk. Janri Simanjuntak</h4>
+                        <h4 class="font-display font-black text-slate-800 text-base">Bpk. Janri Simanjuntak</h4>
                         <span class="text-xs text-slate-400">Periode Jabatan: 2023 - 2029</span>
                     </div>
                     <div class="border-t border-slate-100 pt-4 text-xs text-slate-550 leading-relaxed italic">

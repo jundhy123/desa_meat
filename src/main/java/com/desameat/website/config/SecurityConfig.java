@@ -28,6 +28,7 @@ public class SecurityConfig {
 
                 // STATIC RESOURCES
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/favicon.ico", "/webjars/**").permitAll()
+                .requestMatchers("/error").permitAll()
 
                 // AUTHENTICATION PATHS
                 .requestMatchers("/auth/**").permitAll()

@@ -27,7 +27,7 @@
                     <span class="bg-emerald-500/10 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider" th:text="${post.kategori}">Pemerintahan</span>
                     <span class="text-xs text-slate-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-calendar-alt"></i>
-                        <span th:text="${post.tanggalDraft}">28 Mei 2026</span>
+                        <span th:text="${post.tanggal}">28 Mei 2026</span>
                     </span>
                 </div>
                 <div class="text-xs text-slate-400 flex items-center gap-1.5">
@@ -70,7 +70,7 @@
                             <h4 class="text-xs font-bold text-slate-900 line-clamp-2 hover:text-emerald-600 transition-colors">
                                 <a th:href="@{/berita/{id}(id=${recent.id})}" th:text="${recent.judul}">Progres Renovasi Pelabuhan Ekowisata Modern Balige</a>
                             </h4>
-                            <span class="text-[10px] text-slate-400 font-mono block" th:text="${recent.tanggalDraft}">28 Mei 2026</span>
+                            <span class="text-[10px] text-slate-400 font-mono block" th:text="${recent.tanggal}">28 Mei 2026</span>
                         </div>
                     </div>
                 </div>
